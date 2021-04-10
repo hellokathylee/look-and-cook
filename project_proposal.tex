@@ -1,0 +1,99 @@
+\documentclass[fontsize=11pt]{article}
+\usepackage{amsmath}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=0.75in]{geometry}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage{hanging}
+\usepackage[export]{adjustbox}
+\graphicspath{ {./images/} }
+
+\title{CSC111 Project Proposal: Look and Cook}
+\author{Dana Al Shekerchi, Nehchal Kalsi, Kathy Lee, and Audrey Yoshino}
+\date{Tuesday, March 16, 2021}
+
+\begin{document}
+    \maketitle
+
+    \section*{Problem Description and Research Question}
+% - Overview of background knowledge necessary for the reader to understand the problem you are studying.
+% - Provide context for the problem and motivate why you have chosen your project question/goal.
+% - Research question should be in bold!!!
+    In response to the pandemic's start last spring, many people resorted to exploring hobbies and interests to occupy their abundance of free time. As staying at home was mandatory, people alternated rooms within their homes rather than touring the city. One's second favourite place after their bed was the kitchen. Therefore, people started to try out new recipes to put their cooking skills to the test. Cooking allowed one to fulfill their boredom, improve their skills, and maybe get a good meal out of it. \\
+
+    The endless number of complicated recipes found online drove our motivation to create an application that endangers the misery of not having the right ingredients. Additionally, not all of us are ready to dedicate plenty of time to a meal; we are not even sure it will end up being tasty. Our application will allow the user to input the ingredients they crave or have, and the time they have to create their ideal meal. In doing so, users may step out of their culinary comfort zones by creating something new out of their everyday ingredients. Once the user inputs all the needed information, they would get all the recipes that meet their criteria. \\
+
+    \textbf{Our project aims to conveniently allow one to create a meal using their desired ingredients and time, without leaving their house last minute and spending more time than wanted.} \\
+
+% ____________________________________________________________________________________________
+
+    \section*{Dataset Description}
+
+    There is one relevant dataset that we will be using for this project. This dataset is from Kaggle's "Recipe Ingredients and Reviews". There are four CSV files, but we plan to use only one file, viz., \texttt{clean\_recipes.csv}. The primary separator of this file is a semicolon (;). This dataset has ten columns representing various recipe attributes to organize data and includes over 12200 rows constituting recipes. For computations, we will mainly depend on the columns \texttt{ingredients} and \texttt{total\_time}. However, to present our findings, all the columns will be made use of.
+
+% ____________________________________________________________________________________________
+
+    \section*{Computational Plan}
+% - Describe what kind of data your project will use to represent your chosen domain.
+% - How will you use trees and/or graphs to model a central part of the data? (Trees and/or graphs must play a prominent role in your program)
+% - Provide a source for at least one relevant dataset you have found, and provide some sample data contained inside that dataset.
+% - Describe the kinds of computations you plan to perform
+% - Explain how your program will report the results of your computations in a visual and/or interactive way. You don’t need to go into a lot of details here, but it should be clear what you plan to do.
+
+% Technical requirement: for your project, you must use at least one Python library/module that we have not covered in this course, or use plotly or pygame to a much larger extent than what what have given you so far in this course.
+
+% In this part of your proposal, you should also describe one new library you intend to use, how you will use it, and why it is appropriate. Refer to specific functions, data types, and/or capabilities of the library that make it relevant for solving the problem you wish to solve.
+
+    In this project, we envisage that trees would filter and search the recipes based on user-specified ingredients. The ingredients would be the nodes of the tree. \\
+
+    Based on the user's ingredients, the program would select the first ingredient and assign it as the root node. All the recipes containing only this ingredient (as in root node) will be added to a loop accumulator or a results list. The other recipes that do not contain the first ingredient will branch off and be utilized as the second recursive call input. Then, the program would pick up the second ingredient and test the conditions on the input data, and a similar process would be carried out. All recipes containing only the second ingredient and only the first and second ingredient would be appended to the results list this time. This process would continue until the recipes corresponding to the last ingredient have been added. It should be noted that every time a new ingredient is added, all recipes with valid combinations of the new and the previous ingredients will be appended to the loop accumulator. Also, it is obvious that ingredients that the viable recipes satisfy are found at the leaf node level. (Refer Fig \ref{fig:tree_stctr}) \\
+
+    Apart from this, if the user also specifies the total cooking time, in the first step, all recipes would be filtered based on that condition. And then, a process similar to the one explained above would follow. \\
+
+    While our dataset is available as a CSV file, to start, we will be required to perform a data transformation, obtaining material to work within Python. Simultaneously, data filtering will help limit the scope of information, extracting data that would be meaningful for our purposes. Once our dataset is suitable for use, we may use it to build trees. With this, we intend to form a tree of the searched ingredients, which will aid in finding recipes to fit the user's preferences. Another algorithm to configure is the sorting of search results, which should be prioritized according to the relevance to the user's search criteria. To make our program interactive, evidently, we will be required to design functions to build our user interface and link it with our tree structure. \\
+
+    We plan to use the library tkinter to display our graphical user interface. Users will be presented an input page with a list of potential ingredients divided into subcategories, i.e. pantry items, fresh produce, etcetera, accompanied by a check box. This list of possible ingredients will remain on the left half of the input page, and as users check off items, a list will appear on the right-hand side displaying items that have been checked off. We plan to provide users with an option to check off ``household items," or, in other words, everyday household ingredients (e.g. salt, certain seasonings, oil, flour, etc.) so users do not have to input these ingredients at each usage repeatedly. There will be a button at the bottom of the list of checked off ingredients provided on the right that will display the user with a list of recipes containing \emph{only} the provided ingredients, alongside an image of the recipe as well as details such as cook time, recipe name, and author. The further down the list, the fewer ingredients are used out of those provided. Once users click on the recipes, a separate window will open, providing the user with instructions, measurements, and further details on their chosen recipe. \\
+
+    Some tkinter modules and functions we plan to include are tkinter.scrolledtext (to display necessary lists of recipes and ingredients), the tkinter window manager (to control our display windows), the Button class (to be used at multiple stages in our program) and the Checkbutton class (to create check button widgets for users to input their available ingredients). \\
+
+% ____________________________________________________________________________________________
+
+    \begin{center}
+        \section*{References}
+    \end{center}
+
+% - References used in proposal (for topic research, where you obtained the dataset, any online documentation or tutorials)
+
+    \begin{hangparas}{.25in}{1}
+        Burdurlu, Y. (2019, February 18). Recipe ingredients and reviews. Retrieved March 14, 2021, from \\
+        \url{https://www.kaggle.com/kanaryayi/recipe-ingredients-and-reviews/activity}. \\
+
+        Tkinter - python interface to tcl/tk. (n.d.). Retrieved March 14, 2021, from \\ \url{https://docs.python.org/3/library/tkinter.html}
+    \end{hangparas}
+
+% ____________________________________________________________________________________________
+
+    \newpage
+    \begin{center}
+        \section*{Appendix}
+
+        \Large{The Central Tree Structure of our Program}
+    \end{center}
+
+    \vspace{10 mm}
+
+    \begin{figure}[h] %this figure will be at the right
+        \centering
+        % \includegraphics[width=0.45\textwidth]{figures.png}
+        \includegraphics[scale=0.30]{tree}
+        \caption{Tree structure}
+        \label{fig:tree_stctr}
+    \end{figure}
+
+    \begin{center}
+        The \textbf{yellow} nodes of the tree represent individual ingredients. The \textbf{blue} nodes are a list of combinations of individual ingredients involving the current root of the subtree. The recipes containing \emph{only} the specified ingredient combinations at the leaf level are added to the results.
+    \end{center}
+
+
+\end{document}
