@@ -16,9 +16,10 @@ This file is Copyright (c) 2020 Dana Alshekerchi, Nehchal Kalsi, Kathy Lee, Audr
 from typing import Dict, List
 
 
-def time_sort(data: Dict[str, list], dec_ord: bool = False) -> List[tuple]:
+def time_sort(data: Dict[str, list], max_mins: int, dec_ord: bool = False) -> List[tuple]:
     """Return a dictionary of recipes from data sorted in increasing or decreasing order
-    of the total time of the recipes depending on dec_ord.
+    of the total time of the recipes depending on dec_ord. The total time of the recipes
+    returned is less than the maximum minutes max_mins.
 
     If total time of a recipe is not available, do not include it in the return value.
     """
@@ -47,7 +48,8 @@ def time_sort(data: Dict[str, list], dec_ord: bool = False) -> List[tuple]:
         sorted_times = sorted(times.items(), key=lambda x: x[1])
 
     for item in sorted_times:
-        sorted_recipes.append((item[0], data_copy[item[0]]))
+        if item[1] <= max_mins:     # why getting error?
+            sorted_recipes.append((item[0], data_copy[item[0]]))
         # use list instead of dictionary to maintain sort order
 
     return sorted_recipes
