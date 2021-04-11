@@ -11,8 +11,6 @@ distribution of this code, whether as given or with any changes, are
 expressly prohibited. For more information on copyright for CSC111 materials,
 please consult our Course Syllabus.
 
-Nehchal can you see this?
-
 This file is Copyright (c) 2020 Dana Alshekerchi, Nehchal Kalsi, Kathy Lee, Audrey Yoshino.
 """
 
