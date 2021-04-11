@@ -16,7 +16,7 @@ This file is Copyright (c) 2020 Dana Alshekerchi, Nehchal Kalsi, Kathy Lee, Audr
 from typing import Dict, List
 
 
-def time_sort(data: Dict[str, list], dec_ord: bool = True) -> List[tuple]:
+def time_sort(data: Dict[str, list], dec_ord: bool = False) -> List[tuple]:
     """Return a dictionary of recipes from data sorted in increasing or decreasing order
     of the total time of the recipes depending on dec_ord.
 
@@ -26,7 +26,7 @@ def time_sort(data: Dict[str, list], dec_ord: bool = True) -> List[tuple]:
     sorted_recipes = []
     data_copy = data.copy()     # to not mutate the input
 
-    for item in data_copy:  # item = recipe id
+    for item in data:  # item = recipe id
         total_time = data_copy[item][6]
         total_time.replace(" ", "")   # remove the whitespace
 
@@ -41,10 +41,10 @@ def time_sort(data: Dict[str, list], dec_ord: bool = True) -> List[tuple]:
 
     # sort by value
     if dec_ord:
-        sorted_times = sorted(data_copy.items(), key=lambda x: x[1], reverse=True)
+        sorted_times = sorted(times.items(), key=lambda x: x[1], reverse=True)
 
     else:
-        sorted_times = sorted(data_copy.items(), key=lambda x: x[1])
+        sorted_times = sorted(times.items(), key=lambda x: x[1])
 
     for item in sorted_times:
         sorted_recipes.append((item[0], data_copy[item[0]]))
