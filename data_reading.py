@@ -18,6 +18,9 @@ from __future__ import annotations
 from typing import Dict
 import csv
 
+RECIPES_FILE = "data/clean_recipes.csv"
+REVIEWS_FILE = "data/reviews.csv"   # todo: upload file to repo
+
 
 def read_recipes(file: str) -> Dict[str, list]:
     """Read the given file and return a dictionary with recipe id mapping to
@@ -62,3 +65,27 @@ def get_ingredients(data: Dict[str, list]) -> set:
         ing.update(data[i][7])
 
     return ing
+
+
+def get_review_scores(file: csv) -> Dict[str, float]:
+    """Return a dictionary of recipe ids mapping to respective user ratings obtained
+    from the given file."""
+    unclean_reviews_dict = {}   # recipe_id: (score, length)
+
+    with open(file) as csv_file:
+        reader = csv.reader(csv_file, delimiter=';')
+        next(reader)
+
+        for row in reader:
+
+            if row[0] in unclean_reviews_dict:
+                unclean_reviews_dict[row[0]][0] += int(row[2])
+                unclean_reviews_dict[row[0]][1] += 1
+            else:
+                unclean_reviews_dict[row[0]] = (int(row[2]), 1)
+
+    reviews_dict = {x: unclean_reviews_dict[x][0] / unclean_reviews_dict[x][1]
+                    for x in unclean_reviews_dict}
+
+    return reviews_dict
+
