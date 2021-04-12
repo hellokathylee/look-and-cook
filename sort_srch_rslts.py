@@ -114,6 +114,25 @@ def ingrdnt_sort(data: Dict[str, list], user_ingrdnts: list, graph: data_type.Gr
 
     return sorted_recipes
 
+# sample test run - ingrdnt_sort
+#
+# import data_type
+# my_graph = data_type.load_graph('data/clean_recipes.csv')
+# import data_reading
+# data = data_reading.read('data/clean_recipes.csv')
+# ing = "milk,egg,margarine,white sugar,salt,bread,yeast"
+# lst = ingrdnt_sort(data, ing.split(","), my_graph)
+# lens = []
+# user_ing = set(ing.split(","))
+# for x in lst:
+#     lens.append(len(user_ing.intersection(x[1][7])))
+# bools = []
+# for s in range(len(lens) - 1):
+#     bools.append(lens[s] >= lens[s + 1])
+#
+# all(bools)
+# should receive a True
+
 
 if __name__ == '__main__':
     # import python_ta.contracts
