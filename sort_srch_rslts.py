@@ -14,10 +14,11 @@ please consult our Course Syllabus.
 This file is Copyright (c) 2020 Dana Alshekerchi, Nehchal Kalsi, Kathy Lee, Audrey Yoshino.
 """
 from typing import Dict, List
+# import graph file
 
 
 def time_sort(data: Dict[str, list], max_mins: int, dec_ord: bool = False) -> List[tuple]:
-    """Return a dictionary of recipes from data sorted in increasing or decreasing order
+    """Return a list of recipes from data sorted in increasing or decreasing order
     of the total time of the recipes depending on dec_ord. The total time of the recipes
     returned is less than the maximum minutes max_mins.
 
@@ -84,3 +85,24 @@ def _split_time(time: str) -> list[str]:
         time_lst[2] = "0"
 
     return time_lst
+
+
+def ingrdnt_sort(data: Dict[str, list], user_ingrdnts: list, graph: Graph) -> List[tuple]:
+    """Return a list of recipes from data sorted in decreasing order of number of ingredients
+    used from user_ingrdnts."""
+    recipe_occurence = {}
+    sorted_recipes = []
+
+    for item in user_ingrdnts:
+        neighbours = graph.get_neighbours(item)     # neighbours = set of recipe ids
+
+        for recipe in neighbours:
+            recipe_occurence[recipe] += 1
+
+    sorted_recipe_ids = sorted(recipe_occurence.items(), key=lambda x: x[1], reverse=True)
+
+    for item in sorted_recipe_ids:
+        sorted_recipes.append((item[0], data[item[0]]))
+        # use list instead of dictionary to maintain sort order
+
+    return sorted_recipes
