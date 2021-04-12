@@ -14,12 +14,10 @@ please consult our Course Syllabus.
 This file is Copyright (c) 2021 Dana Al Shekerchi, Nehchal Kalsi, Kathy Lee, and Audrey Yoshino.
 """
 from __future__ import annotations
-import csv
 from typing import Any
 
-# Make sure you've installed the necessary Python libraries (see assignment handout
-# "Installing new libraries" section)
 import networkx as nx  # Used for visualizing graphs (by convention, referred to as "nx")
+# TODO REMOVE??????????????????? ^^^^^^^^
 import data_reading
 
 
@@ -186,8 +184,7 @@ def load_graph(recipes_file: str) -> Graph:
     Each vertex stores as its item either a recipe ID or ingredient. Use the "kind"
     _Vertex attribute to differentiate between the two vertex types.
 
-    Edges represent a review between an ingredient and a recipe. In this graph, each edge
-    represents the use of an ingredient in a recipe.
+    In this graph, each edge represents the use of an ingredient in a recipe.
 
     Preconditions:
         - recipes_file is the path to a CSV file corresponding to the recipes data
@@ -217,10 +214,6 @@ def load_graph(recipes_file: str) -> Graph:
 
 
 if __name__ == '__main__':
-    # You can uncomment the following lines for code checking/debugging purposes.
-    # However, we recommend commenting out these lines when working with the large
-    # datasets, as checking representation invariants and preconditions greatly
-    # increases the running time of the functions/methods.
     # import python_ta.contracts
     # python_ta.contracts.check_all_contracts()
 
@@ -231,7 +224,6 @@ if __name__ == '__main__':
     python_ta.check_all(config={
         'max-line-length': 100,
         'disable': ['E1136'],
-        'extra-imports': ['csv', 'networkx'],
-        'allowed-io': ['load_review_graph'],
+        'extra-imports': ['data_reading', 'networkx'],
         'max-nested-blocks': 4
     })
