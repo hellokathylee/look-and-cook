@@ -20,10 +20,11 @@ from typing import Any
 # Make sure you've installed the necessary Python libraries (see assignment handout
 # "Installing new libraries" section)
 import networkx as nx  # Used for visualizing graphs (by convention, referred to as "nx")
+import data_reading
 
 
 class _Vertex:
-    """A vertex in a #TODO graph, used to represent a user or a book.
+    """A vertex in a recipe graph, used to represent an ingredient or a recipe.
 
     Each vertex item is either a recipe id or ingredient. Both are represented as strings,
     even though we've kept the type annotation as Any to be consistent with lecture.
@@ -48,7 +49,7 @@ class _Vertex:
         This vertex is initialized with no neighbours.
 
         Preconditions:
-            - kind in {'user', 'book'}
+            - kind in {'ingredient', 'recipe'}
         """
         self.item = item
         self.kind = kind
@@ -75,7 +76,7 @@ class _Vertex:
 
 
 class Graph:
-    """A graph used to represent a book review network.
+    """A graph used to represent a recipe network.
     """
     # Private Instance Attributes:
     #     - _vertices:
@@ -153,7 +154,7 @@ class Graph:
         else:
             return set(self._vertices.keys())
 
-    def to_networkx(self, max_vertices: int = 5000) -> nx.Graph:
+    def to_networkx(self, max_vertices: int = 5000) -> nx.Graph:  # TODO REMOVE?????????????????????
         """Convert this graph into a networkx Graph.
 
         max_vertices specifies the maximum number of vertices that can appear in the graph.
@@ -177,133 +178,40 @@ class Graph:
 
         return graph_nx
 
-    ############################################################################
-    # Part 1, Q3
-    ############################################################################
-    def get_similarity_score(self, item1: Any, item2: Any) -> float:
-        """Return the similarity score between the two given items in this graph.
 
-        Raise a ValueError if item1 or item2 do not appear as vertices in this graph.
+def load_graph(recipes_file: str) -> Graph:
+    """Return a recipes graph corresponding to the given datasets.
 
-        >>> g = Graph()
-        >>> for i in range(0, 6):
-        ...     g.add_vertex(str(i), kind='user')
-        >>> g.add_edge('0', '2')
-        >>> g.add_edge('0', '3')
-        >>> g.add_edge('0', '4')
-        >>> g.add_edge('1', '3')
-        >>> g.add_edge('1', '4')
-        >>> g.add_edge('1', '5')
-        >>> g.get_similarity_score('0', '1')
-        0.5
-        """
-        if item1 in self._vertices and item2 in self._vertices:
-            v1 = self._vertices[item1]
-            v2 = self._vertices[item2]
-            return v1.similarity_score(v2)  # check scores between v1 & v2
-        else:
-            raise ValueError  # error if v1 or v2 are not found in vertices
+    The recipes graph stores one vertex for each ingredient and recipe in the datasets.
+    Each vertex stores as its item either a recipe ID or ingredient. Use the "kind"
+    _Vertex attribute to differentiate between the two vertex types.
 
-    ############################################################################
-    # Part 1, Q4
-    ############################################################################
-    def recommend_books(self, book: str, limit: int) -> list[str]:
-        """Return a list of up to <limit> recommended books based on similarity to the given book.
-
-        The return value is a list of the titles of recommended books, sorted in
-        *descending order* of similarity score. Ties are broken in descending order
-        of book title. That is, if v1 and v2 have the same similarity score, then
-        v1 comes before v2 if and only if v1.item > v2.item.
-
-        The returned list should NOT contain:
-            - the input book itself
-            - any book with a similarity score of 0 to the input book
-            - any duplicates
-            - any vertices that represents a user (instead of a book)
-
-        Up to <limit> books are returned, starting with the book with the highest similarity score,
-        then the second-highest similarity score, etc. Fewer than <limit> books are returned if
-        and only if there aren't enough books that meet the above criteria.
-
-        Preconditions:
-            - book in self._vertices
-            - self._vertices[book].kind == 'book'
-            - limit >= 1
-        """
-        all_scores = {}
-
-        for other in self._vertices:
-            if self._vertices[other].kind == 'book' and other != book:
-                all_scores[other] = self.get_similarity_score(book, other)
-
-        sorted_books = sorted(all_scores, key=all_scores.get)  # return list sorted by scores
-        sorted_books.reverse()  # reverse to descending order
-
-        for i in range(len(sorted_books)):  # rearrange titles if similarity scores are identical
-            if i != len(sorted_books) - 1:
-                if all_scores[sorted_books[i]] == all_scores[sorted_books[i + 1]] and \
-                        sorted_books[i] < sorted_books[i + 1]:
-                    sorted_books[i], sorted_books[i + 1] = sorted_books[i + 1], sorted_books[i]
-
-        recommended = sorted_books[:limit]  # reduce to limit list size
-        return [good for good in recommended if all_scores[good] > 0]
-
-
-################################################################################
-# Part 1, Q1
-################################################################################
-def load_review_graph(reviews_file: str, book_names_file: str) -> Graph:
-    """Return a book review graph corresponding to the given datasets.
-
-    The book review graph stores one vertex for each user and book in the datasets.
-    Each vertex stores as its item either a user ID or book TITLE (the latter is why
-    you need the book_names_file). Use the "kind" _Vertex attribute to differentiate
-    between the two vertex types.
-
-    Edges represent a review between a user and a book. In this graph, each edge
-    only represents the existence of a review---IGNORE THE REVIEW SCORE in the
-    datasets, as we don't have a way to represent these scores (yet).
+    Edges represent a review between an ingredient and a recipe. In this graph, each edge
+    represents the use of an ingredient in a recipe.
 
     Preconditions:
-        - reviews_file is the path to a CSV file corresponding to the book review data
-          format described on the assignment handout
-        - book_names_file is the path to a CSV file corresponding to the book data
-          format described on the assignment handout
+        - recipes_file is the path to a CSV file corresponding to the recipes data
 
-    >>> g = load_review_graph('data/reviews_small.csv', 'data/book_names.csv')
-    >>> len(g.get_all_vertices(kind='book'))
-    4
-    >>> len(g.get_all_vertices(kind='user'))
-    5
-    >>> user1_reviews = g.get_neighbours('user1')
-    >>> len(user1_reviews)
-    3
-    >>> "Harry Potter and the Sorcerer's Stone (Book 1)" in user1_reviews
+    >>> g = load_graph('data/clean_recipes.csv')
+    >>> len(g.get_all_vertices(kind='recipe'))
+    12351
+    >>> len(g.get_all_vertices(kind='ingredient'))
+    943
+    >>> peach_coffee_cake = g.get_neighbours('27546')
+    >>> len(peach_coffee_cake)
+    11
+    >>> "peach" in peach_coffee_cake
     True
     """
     graph = Graph()  # start of a Graph
-    books = {}
+    data = data_reading.read(recipes_file)
 
-    with open(reviews_file) as csv_file:
-        rev_reader = csv.reader(csv_file)
+    for recipe in data:
+        graph.add_vertex(recipe, 'recipe')  # add recipe ID
 
-        for row in rev_reader:
-            books[row[1]] = ''  # add reviewed book IDs to dict
-
-    with open(book_names_file) as csv_file:
-        book_reader = csv.reader(csv_file)
-
-        for row in book_reader:
-            if row[0] in books.keys():
-                graph.add_vertex(row[1], 'book')  # add book title vertex
-                books[row[0]] = row[1]  # change value of dict to book title
-
-    with open(reviews_file) as csv_file:
-        rev_reader = csv.reader(csv_file)
-
-        for row in rev_reader:
-            graph.add_vertex(row[0], 'user')  # add user vertex
-            graph.add_edge(row[0], books[row[1]])  # add review edge
+        for ingredient in data[recipe][7]:
+            graph.add_vertex(ingredient, 'ingredient')
+            graph.add_edge(recipe, ingredient)
 
     return graph
 
@@ -327,4 +235,3 @@ if __name__ == '__main__':
         'allowed-io': ['load_review_graph'],
         'max-nested-blocks': 4
     })
-
