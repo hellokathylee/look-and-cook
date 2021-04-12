@@ -89,3 +89,21 @@ def get_review_scores(file: csv) -> Dict[str, float]:
 
     return reviews_dict
 
+
+def get_reviews(file: csv) -> Dict[str, list]:
+    """Return a dictionary of recipe ids mapping to respective user reviews obtained
+       from the given file."""
+    reviews_dict = {}  # recipe_id: [reviews]
+
+    with open(file) as csv_file:
+        reader = csv.reader(csv_file, delimiter=';')
+        next(reader)
+
+        for row in reader:
+
+            if row[0] in reviews_dict:
+                reviews_dict[row[0]].append(row[3])
+            else:
+                reviews_dict[row[0]] = [row[3]]
+
+    return reviews_dict
