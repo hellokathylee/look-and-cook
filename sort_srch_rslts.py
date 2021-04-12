@@ -15,11 +15,12 @@ please consult our Course Syllabus.
 
 This file is Copyright (c) 2020 Dana Alshekerchi, Nehchal Kalsi, Kathy Lee, Audrey Yoshino.
 """
-from typing import Dict, List
+from typing import Dict, List, Union
 import data_type
 
 
-def time_sort(data: Dict[str, list], max_mins: int, dec_ord: bool = False) -> List[tuple]:
+def time_sort(data: Dict[str, list], max_mins: Union[int, None] = None, dec_ord: bool = False) \
+        -> List[tuple]:
     """Return a list of recipes from data sorted in increasing or decreasing order
     of the total time of the recipes depending on dec_ord. The total time of the recipes
     returned is less than the maximum minutes max_mins.
@@ -50,10 +51,14 @@ def time_sort(data: Dict[str, list], max_mins: int, dec_ord: bool = False) -> Li
     else:
         sorted_times = sorted(times.items(), key=lambda x: x[1])
 
-    for item in sorted_times:
-        if item[1] <= max_mins:  # why getting error?
+    if max_mins is None:
+        for item in sorted_times:
             sorted_recipes.append((item[0], data_copy[item[0]]))
-        # use list instead of dictionary to maintain sort order
+    else:
+        for item in sorted_times:
+            if item[1] <= max_mins:  # why getting error?
+                sorted_recipes.append((item[0], data_copy[item[0]]))
+            # use list instead of dictionary to maintain sort order
 
     return sorted_recipes
 
