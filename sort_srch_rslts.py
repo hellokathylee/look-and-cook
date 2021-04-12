@@ -101,7 +101,10 @@ def ingrdnt_sort(data: Dict[str, list], user_ingrdnts: list, graph: data_type.Gr
         assert all([x in graph.get_all_vertices('recipe') for x in neighbours])
 
         for recipe in neighbours:
-            recipe_occurence[recipe] += 1
+            if recipe in recipe_occurence:
+                recipe_occurence[recipe] += 1
+            else:
+                recipe_occurence[recipe] = 1
 
     sorted_recipe_ids = sorted(recipe_occurence.items(), key=lambda x: x[1], reverse=True)
 
