@@ -119,7 +119,7 @@ def ingrdnt_sort(data: Dict[str, list], user_ingrdnts: list, graph: data_type.Gr
 # import data_type
 # my_graph = data_type.load_graph('data/clean_recipes.csv')
 # import data_reading
-# data = data_reading.read('data/clean_recipes.csv')
+# data = data_reading.read_recipes('data/clean_recipes.csv')
 # ing = "milk,egg,margarine,white sugar,salt,bread,yeast"
 # lst = ingrdnt_sort(data, ing.split(","), my_graph)
 # lens = []

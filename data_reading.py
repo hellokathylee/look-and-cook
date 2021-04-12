@@ -19,7 +19,7 @@ from typing import Dict
 import csv
 
 
-def read(file: str) -> Dict[str, list]:
+def read_recipes(file: str) -> Dict[str, list]:
     """Read the given file and return a dictionary with recipe id mapping to
     other attributes of the recipe stored in a list.
     """
@@ -55,7 +55,7 @@ def read(file: str) -> Dict[str, list]:
 
 def get_ingredients(data: Dict[str, list]) -> set:
     """Return a set of ingredients given data complying to the
-    format the function 'read' returns data in."""
+    format the function 'read_recipes' returns data in."""
     ing = set()
 
     for i in data:

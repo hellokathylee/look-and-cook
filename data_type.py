@@ -186,7 +186,7 @@ def load_graph(recipes_file: str) -> Graph:
     True
     """
     graph = Graph()  # start of a Graph
-    data = data_reading.read(recipes_file)
+    data = data_reading.read_recipes(recipes_file)
 
     for recipe in data:
         graph.add_vertex(recipe, 'recipe')  # add recipe ID
