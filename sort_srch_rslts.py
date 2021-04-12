@@ -3,6 +3,8 @@
 Description
 ===============================
 This module uses output from search and sorts results based on user's specifications.
+
+Copyright and Usage Information
 ===============================
 
 This file is provided solely for the personal and private use of TA's and professors
@@ -14,7 +16,7 @@ please consult our Course Syllabus.
 This file is Copyright (c) 2020 Dana Alshekerchi, Nehchal Kalsi, Kathy Lee, Audrey Yoshino.
 """
 from typing import Dict, List
-# import graph file
+import data_type
 
 
 def time_sort(data: Dict[str, list], max_mins: int, dec_ord: bool = False) -> List[tuple]:
@@ -26,17 +28,17 @@ def time_sort(data: Dict[str, list], max_mins: int, dec_ord: bool = False) -> Li
     """
     times = {}
     sorted_recipes = []
-    data_copy = data.copy()     # to not mutate the input
+    data_copy = data.copy()  # to not mutate the input
 
     for item in data:  # item = recipe id
         total_time = data_copy[item][6]
-        total_time.replace(" ", "")   # remove the whitespace
+        total_time.replace(" ", "")  # remove the whitespace
 
         if total_time != "X":
             day, hour, minute = _split_time(total_time)
 
             minutes = (24 * 60 * int(day)) + (60 * int(hour)) + int(minute)
-            times[item] = minutes   # convert time to mins
+            times[item] = minutes  # convert time to mins
 
         else:
             data_copy.pop(item)
@@ -49,7 +51,7 @@ def time_sort(data: Dict[str, list], max_mins: int, dec_ord: bool = False) -> Li
         sorted_times = sorted(times.items(), key=lambda x: x[1])
 
     for item in sorted_times:
-        if item[1] <= max_mins:     # why getting error?
+        if item[1] <= max_mins:  # why getting error?
             sorted_recipes.append((item[0], data_copy[item[0]]))
         # use list instead of dictionary to maintain sort order
 
@@ -61,14 +63,14 @@ def _split_time(time: str) -> list[str]:
     assert time != 'X'
     time_lst = []
 
-    if 'd' in time:     # manage day
+    if 'd' in time:  # manage day
         time_lst = time.split("d")
     else:
         time_lst.extend(['0', time])
 
     assert len(time_lst) == 2
 
-    if 'h' in time_lst[1]:      # manage hour
+    if 'h' in time_lst[1]:  # manage hour
         mixed_time = time_lst[1]
         time_lst.extend(time_lst[1].split("h"))
         time_lst.remove(mixed_time)
@@ -87,14 +89,16 @@ def _split_time(time: str) -> list[str]:
     return time_lst
 
 
-def ingrdnt_sort(data: Dict[str, list], user_ingrdnts: list, graph: Graph) -> List[tuple]:
+def ingrdnt_sort(data: Dict[str, list], user_ingrdnts: list, graph: data_type.Graph) -> List[tuple]:
     """Return a list of recipes from data sorted in decreasing order of number of ingredients
     used from user_ingrdnts."""
     recipe_occurence = {}
     sorted_recipes = []
 
     for item in user_ingrdnts:
-        neighbours = graph.get_neighbours(item)     # neighbours = set of recipe ids
+        neighbours = graph.get_neighbours(item)  # neighbours = set of recipe ids
+
+        assert all([x in graph.get_all_vertices('recipe') for x in neighbours])
 
         for recipe in neighbours:
             recipe_occurence[recipe] += 1
@@ -106,3 +110,19 @@ def ingrdnt_sort(data: Dict[str, list], user_ingrdnts: list, graph: Graph) -> Li
         # use list instead of dictionary to maintain sort order
 
     return sorted_recipes
+
+
+if __name__ == '__main__':
+    # import python_ta.contracts
+    # python_ta.contracts.check_all_contracts()
+
+    import doctest
+    doctest.testmod()
+
+    import python_ta
+    python_ta.check_all(config={
+        'max-line-length': 100,
+        'disable': ['E1136'],
+        'extra-imports': ['data_type'],
+        'max-nested-blocks': 4
+    })
