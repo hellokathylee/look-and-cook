@@ -107,3 +107,110 @@ def get_reviews(file: csv) -> Dict[str, list]:
                 reviews_dict[row[0]] = [row[3]]
 
     return reviews_dict
+
+
+def clean_ingredients(data: Dict[str, list]) -> None:
+    """Mutate the provided dictionary by cleaning the ingredients (removing measurements and
+    strings that aren't ingredients).
+    """
+    words_to_remove = {'packages', 'cups', 'cup', 'tablespoons', 'tablespoon', 'teaspoon',
+                       'teaspoons', 'packets', 'pounds', 'pound', 'inch', 'ounces', 'drops',
+                       'dashes', 'jar', 'dash', 'envelope', 'container', 'package', 'crushed',
+                       'ounce', 'cans', 'can', 'loaves', 'bottle', 'packet', 'tube', 'bottle',
+                       'sheets', 'recipe'}
+
+    remove_ingredients1 = {'marinate', 'low fat', 'breakfast', 'england', ' 2', 'fry', 'side',
+                           'low sodium', 'Dry Mix Ingredients', 'kosher for passover', '2',
+                           'mexico', 'raw', 'drained and mashed', 'without shells', 'bake',
+                           'peeled and segmented', 'peeled and shredded', 'pan drippings',
+                           'dessert', 'cubed', '(optional)', 'to taste', 'drained and chopped',
+                           'Glaze', 'rinsed and dried', 'divided', 'thick circles',
+                           'washed and cubed', 'mashed', 'fat free', 'Southern Comfort',
+                           'peeled and julienned', 'lunch', 'chopped', 'stemmed and rinsed',
+                           's thick', 'y'}
+
+    remove_ingredients2 = {'rinsed and torn', 'and dried', 'rating',
+                           'peeled and cubed', 'split', 'for topping', 'warmed'}
+
+    for recipe in data:
+        ingredients = data[recipe][7]
+        ingredients_to_remove = set()
+        ingredients_to_add = set()
+
+        for ingredient in ingredients:
+            add_ingredient = True
+            new_ingredient = ingredient
+
+            if ingredient == '':
+                # If the ingredient is an empty string, remove it.
+                ingredients_to_remove.add(ingredient)
+                add_ingredient = False
+
+            elif (ingredient[-1] == ':') or (ingredient.isupper()) or \
+                    (ingredient in remove_ingredients1):
+                # If a label has incorrectly been classified as an ingredient or the entire
+                # string is not an ingredient, remove it.
+                ingredients_to_remove.add(ingredient)
+                add_ingredient = False
+
+            elif ingredient[0] == ' ':
+                # If the ingredient has a space at the beginning of it's string, remove the space
+                new_ingredient = ingredient[1:]
+                ingredients_to_remove.add(ingredient)
+
+            elif any(character.isdigit() for character in new_ingredient):
+                # If there is a number indicating the quantity of an ingredient, remove it (and the
+                # space following it).
+                numbers = [character for character in new_ingredient if character.isdigit()]
+                number_index = new_ingredient.index(numbers[-1])
+
+                new_ingredient = new_ingredient[number_index + 2:]
+
+                ingredients_to_remove.add(ingredient)
+
+            if ')' in new_ingredient:
+                beginning = new_ingredient.index(')')
+
+                new_ingredient = new_ingredient[beginning + 2:]
+
+            for word in words_to_remove:
+                # Remove measurements using key words
+                if word in new_ingredient:
+                    beginning = new_ingredient.index(word)
+                    word_end_index = beginning + len(word)
+
+                    new_ingredient = new_ingredient[word_end_index + 1:]
+
+                    ingredients_to_remove.add(ingredient)
+
+            for word in remove_ingredients2:
+                # Remove entire ingredients if they aren't food items
+                if word in ingredient:
+                    ingredients_to_remove.add(ingredient)
+                    add_ingredient = False
+
+            if 'to taste' in new_ingredient:
+                # If the substring 'to taste' is in the ingredient, remove the 'to taste'
+                index = new_ingredient.index('to taste')
+                new_ingredient = new_ingredient[:index]
+
+            if add_ingredient:
+                ingredients_to_add.add(new_ingredient)
+
+        for ingredient in ingredients_to_remove:
+            # Remove all the unnecessary ingredients: did not mutate in the for loop because of
+            # possible errors
+            ingredients.remove(ingredient)
+
+        for ingredient in ingredients_to_add:
+            final_ingredient = ingredient
+
+            if ingredient != '':
+                # As long as the new ingredient is not an empty string, add it to the recipe's
+                # ingredients.
+                if ingredient[0] == ' ':
+                    # Ensure the ingredient we are adding does not have an unnecessary space at the
+                    # beginning
+                    final_ingredient = ingredient[1:]
+
+                ingredients.add(final_ingredient)
