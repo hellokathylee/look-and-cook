@@ -57,21 +57,6 @@ class _Vertex:
         """Return the degree of this vertex."""
         return len(self.neighbours)
 
-    ############################################################################
-    # Part 1, Q3
-    ############################################################################
-    def similarity_score(self, other: _Vertex) -> float:
-        """Return the similarity score between this vertex and other.
-
-        See Assignment handout for definition of similarity score.
-        """
-        if self.degree() == 0 or other.degree() == 0:
-            return 0.0
-        else:
-            vertices = set.union(self.neighbours, other.neighbours)
-            common = set.intersection(self.neighbours, other.neighbours)
-            return len(common) / len(vertices)
-
 
 class Graph:
     """A graph used to represent a recipe network.
