@@ -95,8 +95,11 @@ def _split_time(time: str) -> list[str]:
 
 
 def ingrdnt_sort(data: Dict[str, list], user_ingrdnts: list, graph: data_type.Graph) -> List[tuple]:
-    """Return a list of recipes from data sorted in decreasing order of number of ingredients
-    used from user_ingrdnts."""
+    """Return a list of tuples containing the recipe ids and other attributes of recipes
+     from data sorted in decreasing order of number of ingredients used from user_ingrdnts.
+
+     NOTE: The recipes returned may contain ingredients extra than user_ingredients.
+    """
     recipe_occurence = {}
     sorted_recipes = []
 
