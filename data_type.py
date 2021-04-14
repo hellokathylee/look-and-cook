@@ -192,8 +192,8 @@ def load_graph(recipes_file: str) -> Graph:
         graph.add_vertex(recipe, 'recipe')  # add recipe ID
 
         for ingredient in data[recipe][7]:
-            graph.add_vertex(ingredient, 'ingredient')
-            graph.add_edge(recipe, ingredient)
+            graph.add_vertex(ingredient.strip(), 'ingredient')
+            graph.add_edge(recipe, ingredient.strip())
 
     return graph
 

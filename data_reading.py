@@ -38,7 +38,10 @@ def read_recipes(file: str) -> Dict[str, list]:
 
             for inner_row in row[:9]:
                 if index == 7:  # ingredients
-                    dict_val.append(set(inner_row.split(',')))
+                    ingredients = inner_row.split(',')
+                    cleaned_ing = [x.strip() for x in ingredients]
+                    dict_val.append(set(cleaned_ing))
+                    # dict_val.append(set(inner_row.split(',')))
 
                 elif index == 8:    # directions
                     sntnc = row[8].strip("'")
