@@ -123,11 +123,13 @@ def clean_ingredients(data: Dict[str, list]) -> None:
                            'low sodium', 'Dry Mix Ingredients', 'kosher for passover', '2',
                            'mexico', 'raw', 'drained and mashed', 'without shells', 'bake',
                            'peeled and segmented', 'peeled and shredded', 'pan drippings',
-                           'dessert', 'cubed', '(optional)', 'to taste', 'drained and chopped',
+                           'dessert', 'cubed', '(optional)', 'drained and chopped',
                            'Glaze', 'rinsed and dried', 'divided', 'thick circles',
                            'washed and cubed', 'mashed', 'fat free', 'Southern Comfort',
                            'peeled and julienned', 'lunch', 'chopped', 'stemmed and rinsed',
-                           's thick', 'y'}
+                           's thick', 'y', 'chopped', 'drained and finely chopped', 'top round',
+                           'julienned', 'cleaned', 'boil', 'calories', 'party', 'gluten', 'Filling',
+                           't'}
 
     remove_ingredients2 = {'rinsed and torn', 'and dried', 'rating',
                            'peeled and cubed', 'split', 'for topping', 'warmed'}
@@ -146,8 +148,7 @@ def clean_ingredients(data: Dict[str, list]) -> None:
                 ingredients_to_remove.add(ingredient)
                 add_ingredient = False
 
-            elif (ingredient[-1] == ':') or (ingredient.isupper()) or \
-                    (ingredient in remove_ingredients1):
+            elif ingredient[-1] == ':' or ingredient.isupper() or ingredient in remove_ingredients1:
                 # If a label has incorrectly been classified as an ingredient or the entire
                 # string is not an ingredient, remove it.
                 ingredients_to_remove.add(ingredient)
