@@ -17,7 +17,7 @@ This file is Copyright (c) 2020 Dana Alshekerchi, Nehchal Kalsi, Kathy Lee, Audr
 # import PyQt5.QtWidgets as qtw
 # import PyQt5.QtGui as qtg
 from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QApplication, QLabel, QDialog, QVBoxLayout, QWidget, QDesktopWidget, QMainWindow
+from PyQt5.QtWidgets import QApplication, QLabel, QDialog, QVBoxLayout, QWidget, QDesktopWidget, QMainWindow, QPushButton
 from PyQt5.QtCore import Qt
 import sys
 from PyQt5 import QtGui
@@ -42,14 +42,12 @@ class MainWindow(QDialog, QWidget):
     # # Change Size
     # label.setFont(qtg.QFont("Helvetica", 18))
     # self.layout().addWidget(label)
-    def center(self): # Used top center the window on the desktop
+
+    def center(self):  # Used top center the window on the desktop
         qr = self.frameGeometry()
         cp = QDesktopWidget().availableGeometry().center()
         qr.moveCenter(cp)
         self.move(qr.topLeft())
-
-    def start(self):
-        print("works")
 
     def InitWindow(self):
         # self.setWindowIcon(QtGui.QIcon(self.icon))
@@ -57,16 +55,35 @@ class MainWindow(QDialog, QWidget):
         self.setWindowTitle(self.title)
 
         vbox = QVBoxLayout()
+        # for title image
         Image = QLabel()
         pixmap = QPixmap("testing.png")
         Image.setPixmap(pixmap)
         vbox.addWidget(Image, alignment=Qt.AlignCenter)
-        start = QtWidgets.QPushButton(self)
-        start.setText("Start")
-        # start.clicked.connect(start)
+
+        # Button stuff
+        b1 = QPushButton("Start", self)
+        b1.move((self.width//2)-50, self.height//2 + 100)
+        b1.clicked.connect(self.clicked)
+
 
         self.setLayout(vbox)
         self.show()  # Opens the window
+
+    def clicked(self):
+        self.hide()
+        mydialog = QDialog(self)
+        # mydialog.setModal(True)
+        # mydialog.exec_()
+        # Copied it from center, figure out why it didnt work before
+        mydialog.setGeometry(self.left, self.top, self.width, self.height)
+        qr = mydialog.frameGeometry()
+        cp = QDesktopWidget().availableGeometry().center()
+        qr.moveCenter(cp)
+        mydialog.move(qr.topLeft())
+
+
+        mydialog.show()
 
 
 if __name__ == "__main__":
