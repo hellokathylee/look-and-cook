@@ -15,11 +15,33 @@ This file is Copyright (c) 2020 Dana Alshekerchi, Nehchal Kalsi, Kathy Lee, Audr
 """
 
 from __future__ import annotations
-from typing import Dict
+from typing import Dict, Tuple, List
 import csv
 
 RECIPES_FILE = "data/clean_recipes.csv"
 REVIEWS_FILE = "data/reviews.csv"   # todo: upload file to repo
+
+# Key measurement words to remove from ingredients
+WORDS_TO_REMOVE = {'packages', 'cups', 'cup', 'tablespoons', 'tablespoon', 'teaspoon',
+                   'teaspoons', 'packets', 'pounds', 'pound', 'inch', 'ounces', 'drops',
+                   'dashes', 'jar', 'dash', 'envelope', 'container', 'package', 'crushed',
+                   'ounce', 'cans', 'can', 'loaves', 'bottle', 'packet', 'tube', 'bottle',
+                   'sheets', 'recipe', 'peeled and chopped'}
+
+# Key words of ingredients to remove
+REMOVE_INGREDIENTS1 = {'marinate', 'low fat', 'breakfast', 'england', ' 2', 'fry', 'side',
+                       'low sodium', 'Dry Mix Ingredients', 'kosher for passover', '2',
+                       'mexico', 'raw', 'drained and mashed', 'without shells', 'bake',
+                       'peeled and segmented', 'peeled and shredded', 'pan drippings',
+                       'dessert', 'cubed', '(optional)', 'drained and chopped',
+                       'Glaze', 'rinsed and dried', 'divided', 'thick circles',
+                       'washed and cubed', 'mashed', 'fat free', 'Southern Comfort',
+                       'peeled and julienned', 'lunch', 'chopped', 'stemmed and rinsed',
+                       's thick', 'y', 'chopped', 'drained and finely chopped', 'top round',
+                       'julienned', 'cleaned', 'boil', 'calories', 'party', 'gluten', 'Filling',
+                       't', 'or less Grenadine ('}
+REMOVE_INGREDIENTS2 = {'rinsed and torn', 'and dried', 'rating',
+                       'peeled and cubed', 'split', 'for topping', 'warmed'}
 
 
 def read_recipes(file: str) -> Dict[str, list]:
@@ -41,7 +63,7 @@ def read_recipes(file: str) -> Dict[str, list]:
                     ingredients = inner_row.split(',')
                     cleaned_ing = [x.strip() for x in ingredients]
                     dict_val.append(set(cleaned_ing))
-                    # dict_val.append(set(inner_row.split(',')))
+                    # dict_val.append(seREt(inner_row.split(',')))
 
                 elif index == 8:    # directions
                     sntnc = row[8].strip("'")
@@ -116,90 +138,9 @@ def clean_ingredients(data: Dict[str, list]) -> None:
     """Mutate the provided dictionary by cleaning the ingredients (removing measurements and
     strings that aren't ingredients).
     """
-    words_to_remove = {'packages', 'cups', 'cup', 'tablespoons', 'tablespoon', 'teaspoon',
-                       'teaspoons', 'packets', 'pounds', 'pound', 'inch', 'ounces', 'drops',
-                       'dashes', 'jar', 'dash', 'envelope', 'container', 'package', 'crushed',
-                       'ounce', 'cans', 'can', 'loaves', 'bottle', 'packet', 'tube', 'bottle',
-                       'sheets', 'recipe'}
-
-    remove_ingredients1 = {'marinate', 'low fat', 'breakfast', 'england', ' 2', 'fry', 'side',
-                           'low sodium', 'Dry Mix Ingredients', 'kosher for passover', '2',
-                           'mexico', 'raw', 'drained and mashed', 'without shells', 'bake',
-                           'peeled and segmented', 'peeled and shredded', 'pan drippings',
-                           'dessert', 'cubed', '(optional)', 'drained and chopped',
-                           'Glaze', 'rinsed and dried', 'divided', 'thick circles',
-                           'washed and cubed', 'mashed', 'fat free', 'Southern Comfort',
-                           'peeled and julienned', 'lunch', 'chopped', 'stemmed and rinsed',
-                           's thick', 'y', 'chopped', 'drained and finely chopped', 'top round',
-                           'julienned', 'cleaned', 'boil', 'calories', 'party', 'gluten', 'Filling',
-                           't'}
-
-    remove_ingredients2 = {'rinsed and torn', 'and dried', 'rating',
-                           'peeled and cubed', 'split', 'for topping', 'warmed'}
-
     for recipe in data:
         ingredients = data[recipe][7]
-        ingredients_to_remove = set()
-        ingredients_to_add = set()
-
-        for ingredient in ingredients:
-            add_ingredient = True
-            new_ingredient = ingredient
-
-            if ingredient == '':
-                # If the ingredient is an empty string, remove it.
-                ingredients_to_remove.add(ingredient)
-                add_ingredient = False
-
-            elif ingredient[-1] == ':' or ingredient.isupper() or ingredient in remove_ingredients1:
-                # If a label has incorrectly been classified as an ingredient or the entire
-                # string is not an ingredient, remove it.
-                ingredients_to_remove.add(ingredient)
-                add_ingredient = False
-
-            elif ingredient[0] == ' ':
-                # If the ingredient has a space at the beginning of it's string, remove the space
-                new_ingredient = ingredient[1:]
-                ingredients_to_remove.add(ingredient)
-
-            elif any(character.isdigit() for character in new_ingredient):
-                # If there is a number indicating the quantity of an ingredient, remove it (and the
-                # space following it).
-                numbers = [character for character in new_ingredient if character.isdigit()]
-                number_index = new_ingredient.index(numbers[-1])
-
-                new_ingredient = new_ingredient[number_index + 2:]
-
-                ingredients_to_remove.add(ingredient)
-
-            if ')' in new_ingredient:
-                beginning = new_ingredient.index(')')
-
-                new_ingredient = new_ingredient[beginning + 2:]
-
-            for word in words_to_remove:
-                # Remove measurements using key words
-                if word in new_ingredient:
-                    beginning = new_ingredient.index(word)
-                    word_end_index = beginning + len(word)
-
-                    new_ingredient = new_ingredient[word_end_index + 1:]
-
-                    ingredients_to_remove.add(ingredient)
-
-            for word in remove_ingredients2:
-                # Remove entire ingredients if they aren't food items
-                if word in ingredient:
-                    ingredients_to_remove.add(ingredient)
-                    add_ingredient = False
-
-            if 'to taste' in new_ingredient:
-                # If the substring 'to taste' is in the ingredient, remove the 'to taste'
-                index = new_ingredient.index('to taste')
-                new_ingredient = new_ingredient[:index]
-
-            if add_ingredient:
-                ingredients_to_add.add(new_ingredient)
+        ingredients_to_remove, ingredients_to_add = clean_ingredient_set(ingredients)
 
         for ingredient in ingredients_to_remove:
             # Remove all the unnecessary ingredients: did not mutate in the for loop because of
@@ -207,14 +148,102 @@ def clean_ingredients(data: Dict[str, list]) -> None:
             ingredients.remove(ingredient)
 
         for ingredient in ingredients_to_add:
-            final_ingredient = ingredient
+            if ingredient is not None and ingredient != '':
+                final_ingredient = ingredient
 
-            if ingredient != '':
-                # As long as the new ingredient is not an empty string, add it to the recipe's
-                # ingredients.
-                if ingredient[0] == ' ':
+                if final_ingredient[0] == ' ':
                     # Ensure the ingredient we are adding does not have an unnecessary space at the
                     # beginning
                     final_ingredient = ingredient[1:]
 
                 ingredients.add(final_ingredient)
+
+
+def clean_ingredient_set(ingredients: set) -> Tuple:
+    """Helper function for clean_ingredients.
+
+    Return a tuple where the first element is a set of unclean ingredients to remove from the
+    original set and the second element is a set of cleaned ingredients to add to the original set.
+    """
+    ingredients_to_remove = set()
+    ingredients_to_add = set()
+
+    for ingredient in ingredients:
+        new_ingredient = None
+        remove = check_remove(ingredient)
+
+        if ingredient == '':
+            # If the ingredient is an empty string, remove it.
+            ingredients_to_remove.add(ingredient)
+
+        elif ingredient[-1] == ':' or ingredient.isupper() or ingredient in REMOVE_INGREDIENTS1:
+            # If a label has incorrectly been classified as an ingredient or the entire
+            # string is not an ingredient, remove it.
+            ingredients_to_remove.add(ingredient)
+
+        elif ')' in ingredient:
+            # Remove parenthesis if in ingredient
+            beginning = ingredient.index(')')
+            new_ingredient = ingredient[beginning + 2:]
+
+        elif ingredient[0] == ' ':
+            # If the ingredient has a space at the beginning of it's string, remove the space
+            new_ingredient = ingredient[1:]
+            ingredients_to_remove.add(ingredient)
+
+        elif any(character.isdigit() for character in ingredient):
+            # If there is a number indicating the quantity of an ingredient, remove it (and the
+            # space following it).
+            numbers = [character for character in ingredient if character.isdigit()]
+            number_index = ingredient.index(numbers[-1])
+
+            new_ingredient = ingredient[number_index + 2:]
+            ingredients_to_remove.add(ingredient)
+
+        if remove[1]:
+            ingredients_to_remove.add(ingredient)
+            new_ingredient = None
+
+        # Finally, check the ingredient doesn't contain any measurement key words.
+        elif remove[0][0]:
+            word = remove[0][1]
+            beginning = ingredient.index(word)
+            word_end_index = beginning + len(word)
+            new_ingredient = ingredient[word_end_index + 1:]
+            ingredients_to_remove.add(ingredient)
+
+        if new_ingredient is not None:
+            if 'to taste' in new_ingredient:
+                # If the substring 'to taste' is in the ingredient, remove the 'to taste'
+                index = new_ingredient.index('to taste')
+                new_ingredient = new_ingredient[:index]
+
+        ingredients_to_add.add(new_ingredient)
+
+    return (ingredients_to_remove, ingredients_to_add)
+
+
+def check_remove(ingredient: str) -> \
+        List[List, bool]:
+    """Helper function for clean_ingredient_set.
+
+    Returns a list of booleans. The first nested list indicates whether there is a
+    'measurement word' in the provided ingredient and (if so) contains the measurement word
+    at the first index.
+    The second element is a boolean that indicates whether there is a word from REMOVE_INGREDIENTS2
+    present in the provided ingredient.
+    """
+    remove = [[False], False]
+
+    for word in WORDS_TO_REMOVE:
+        # Remove measurements using key words
+        if word in ingredient:
+            remove[0][0] = True
+            remove[0].append(word)
+
+    for word in REMOVE_INGREDIENTS2:
+        # Remove entire ingredients if they aren't food items
+        if word in ingredient:
+            remove[1] = True
+
+    return remove
