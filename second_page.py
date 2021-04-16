@@ -2,7 +2,7 @@
 # import PyQt5.QtGui as qtg
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QApplication, QLabel, QDialog, QVBoxLayout, QWidget, QDesktopWidget, \
-    QMainWindow, QPushButton, QCompleter, QLineEdit, QListWidget, QListView, QHBoxLayout
+    QMainWindow, QPushButton, QCompleter, QLineEdit, QListWidget, QListView, QHBoxLayout, QAction, QMessageBox
 from PyQt5.QtCore import Qt
 import sys
 from PyQt5 import QtGui
@@ -10,18 +10,21 @@ from PyQt5.QtGui import QPixmap
 import data_reading
 
 
-class ingredients(QDialog):
+class ingredients(QDialog, QWidget):
     def __init__(self):
         super().__init__()
 
         self.ingredient = QLabel("Ingredients", self)
         self.ingredient.move(30, 50)
-        self.max_add_label = QLabel("Max number is 4953", self)
-        self.max_add_label.move(5, 10)
+        self.max_add_label = QLabel("Max number of ingredients ", self)
+
         self.max_time_label = QLabel("Max time", self)
-        self.max_time_label.move(100, 59)
+
         self.all_label = QLabel("All Ingredients", self)
-        self.all_label.move(200, 70)
+        self.all_label.move(300, 25)
+
+        self.time = QLineEdit(self)
+
         self.list = QListWidget()
         data = data_reading.read_recipes(data_reading.RECIPES_FILE)
         data_reading.clean_ingredients(data)
@@ -54,13 +57,18 @@ class ingredients(QDialog):
         # vbox.addWidget(self.line_edit, alignment=Qt.AlignLeft)
         # vbox.addWidget(self.list, alignment=Qt.AlignCenter)
         # self.setLayout(vbox)
-
+        self.max_add_label.move(3 * (self.width // 4) - 25, self.height // 4 - 50)
+        self.max_add_label.resize(200, 20)
+        self.max_time_label.move(3 * (self.width // 4) + 20, (self.height // 4) + 100)
+        self.time.move(3 * (self.width // 4), (self.height // 4) + 130)
         # Figure out placement
         vbox = QVBoxLayout()
-        vbox.setContentsMargins(100, 150, 100, 100)
-        self.list.setFixedSize(300, 150)
+        vbox.setContentsMargins(225, 50, 100, 50)
+        self.list.setFixedSize(250, 500)
         vbox.addWidget(self.list)
         self.setLayout(vbox)
+
+
 
         # Add button
         add = QPushButton("Add", self)
@@ -73,6 +81,12 @@ class ingredients(QDialog):
 
         label_test = QLabel('Text')
         label_test.move(50, 70)
+
+        clear = QPushButton("Clear", self)
+        clear.move(3 * (self.width // 4), self.height + 25)
+
+        submit = QPushButton("Submit", self)
+        submit.move(3 * (self.width // 4), self.height + 75)
 
         self.show()
 
