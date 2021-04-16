@@ -95,21 +95,22 @@ def get_ingredients(data: Dict[str, list]) -> set:
 def get_review_scores(file: csv) -> Dict[str, float]:
     """Return a dictionary of recipe ids mapping to respective user ratings obtained
     from the given file."""
-    unclean_reviews_dict = {}   # recipe_id: (score, length)
+    unclean_reviews_dict = {}   # recipe_id: [score, length]
 
     with open(file) as csv_file:
         reader = csv.reader(csv_file, delimiter=';')
         next(reader)
 
         for row in reader:
+            row = row[0].split(",")
 
             if row[0] in unclean_reviews_dict:
-                unclean_reviews_dict[row[0]][0] += int(row[2])
+                unclean_reviews_dict[row[0]][0] += int(float(row[2]))
                 unclean_reviews_dict[row[0]][1] += 1
             else:
-                unclean_reviews_dict[row[0]] = (int(row[2]), 1)
+                unclean_reviews_dict[row[0]] = [int(float(row[2])), 1]
 
-    reviews_dict = {x: unclean_reviews_dict[x][0] / unclean_reviews_dict[x][1]
+    reviews_dict = {x: round(unclean_reviews_dict[x][0] / unclean_reviews_dict[x][1], 1)
                     for x in unclean_reviews_dict}
 
     return reviews_dict
@@ -125,11 +126,12 @@ def get_reviews(file: csv) -> Dict[str, list]:
         next(reader)
 
         for row in reader:
-
-            if row[0] in reviews_dict:
-                reviews_dict[row[0]].append(row[3])
-            else:
-                reviews_dict[row[0]] = [row[3]]
+            # breakpoint()
+            if len(row) == 4:
+                if row[0] in reviews_dict:
+                    reviews_dict[row[0]].append(row[3])
+                else:
+                    reviews_dict[row[0]] = [row[3]]
 
     return reviews_dict
 
