@@ -26,6 +26,9 @@ class ingredients(QDialog, QWidget):
 
         self.time = QLineEdit(self)
 
+        self.ing1 = QLineEdit(self)
+        self.ing2 = QLineEdit(self)
+
         self.list = QListWidget()
         data = data_reading.read_recipes(data_reading.RECIPES_FILE)
         data_reading.clean_ingredients(data)
@@ -44,23 +47,30 @@ class ingredients(QDialog, QWidget):
 
         self.line_edit = None
 
+    def ingredients(self, name: str, items: list[str]) -> None:
+        vbox = QVBoxLayout()
+        # testing = ['check', 'one', 'two', 'three', 'white pepper', 'blue pepper']
+        completer = QCompleter(items)
+        completer.setFilterMode(Qt.MatchContains)
+        self.line_edit = QLineEdit()
+        self.line_edit.setCompleter(completer)
+        vbox.addWidget(self.line_edit, alignment=Qt.AlignLeft)
+        self.setLayout(vbox)
+
     def InitWindow(self):
         # self.setWindowIcon(QtGui.QIcon(self.icon))
         self.setGeometry(self.left, self.top, self.width, self.height)
         self.setWindowTitle(self.title)
-        # vbox = QVBoxLayout()
-        # testing = ['check', 'one', 'two', 'three', 'white pepper', 'blue pepper']
-        # completer = QCompleter(testing)
-        # completer.setFilterMode(Qt.MatchContains)
-        # self.line_edit = QLineEdit()
-        # self.line_edit.setCompleter(completer)
-        # vbox.addWidget(self.line_edit, alignment=Qt.AlignLeft)
-        # vbox.addWidget(self.list, alignment=Qt.AlignCenter)
-        # self.setLayout(vbox)
+
+
+
         self.max_add_label.move(3 * (self.width // 4) - 25, self.height // 4 - 50)
         self.max_add_label.resize(200, 20)
         self.max_time_label.move(3 * (self.width // 4) + 20, (self.height // 4) + 100)
         self.time.move(3 * (self.width // 4), (self.height // 4) + 130)
+
+        self.ing1.move(30, 75)
+        self.ing2.move(30, 100)
         # Figure out placement
         vbox = QVBoxLayout()
         vbox.setContentsMargins(225, 50, 100, 50)
@@ -71,7 +81,7 @@ class ingredients(QDialog, QWidget):
         # Add button
         add = QPushButton("Add", self)
         add.move(3 * (self.width // 4), self.height // 4)
-        # add.clicked.connect(self.clicked)
+        # add.clicked.connect(self.add)
 
         # Delete button
         delete = QPushButton("Delete", self)
@@ -87,6 +97,8 @@ class ingredients(QDialog, QWidget):
         submit.move(3 * (self.width // 4), self.height + 75)
 
         self.show()
+    # def add(self):
+
 
     def center(self):  # Used top center the window on the desktop
         qr = self.frameGeometry()
