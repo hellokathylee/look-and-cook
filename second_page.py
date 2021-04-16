@@ -229,6 +229,7 @@ class ingredients(QDialog, QWidget):
                 # next_page.setStandardButtons(QMessageBox.Cancel | QMessageBox.Yes)
                 x = next_page.exec_()
 
+
     # def third_page(self, i):
     #     if i == "Yes":
 
