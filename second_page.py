@@ -117,7 +117,6 @@ class ingredients(QDialog, QWidget):
         self.ing10.move(30, 550)
         self.ing10.setDisabled(True)
 
-
         self.max_add_label.move(3 * (self.width // 4) - 25, self.height // 4 - 50)
         self.max_add_label.resize(200, 20)
         self.max_time_label.move(3 * (self.width // 4) + 20, (self.height // 4) + 100)
@@ -213,12 +212,20 @@ class ingredients(QDialog, QWidget):
             warning.setText('Did not fill all the needed information')
             warning.setIcon(QMessageBox.Critical)
             x = warning.exec_()
+
         elif not all([x.text() in self.clean for x in self.ing if x.isEnabled()]):
+            invalid_ingrdnt = None
+            for x in self.ing:
+                if x.text() not in self.clean and x.isEnabled():
+                    invalid_ingrdnt = x.text()
+
             invalid = QMessageBox()
             invalid.setWindowTitle("Error")
-            invalid.setText('One or more of the ingredients are invalid')
+            # invalid.setText('One or more of the ingredients are invalid')
+            invalid.setText(f"The ingredient {invalid_ingrdnt} is invalid")
             invalid.setIcon(QMessageBox.Critical)
             x = invalid.exec_()
+
         else:
             print(type(self.time.text()))
             if self.time.text() == '0':
