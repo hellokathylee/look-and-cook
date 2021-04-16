@@ -52,7 +52,6 @@ class ingredients(QDialog, QWidget):
             self.list.insertItem(i, self.clean[i])
         # self.list.setResizeMode(QListView_ResizeMode=)
 
-
         self.title = "Page 2"
         self.left = 500
         self.top = 200
@@ -76,13 +75,10 @@ class ingredients(QDialog, QWidget):
         completer = QCompleter(self.clean)
         completer.setFilterMode(Qt.MatchContains)
 
-
-
         self.ing1.setCompleter(completer)
-        # self.ing1.setFixedSize(100, 50)
-        # vbox.addWidget(self.ing1, alignment= Qt.Align)
         self.ing1.move(30, 100)
         self.ing1.setFixedSize(150, 30)
+
         height = 150
         for x in self.ing[1:]:
             x.setCompleter(completer)
@@ -90,7 +86,6 @@ class ingredients(QDialog, QWidget):
             x.setFixedSize(150, 30)
             x.setDisabled(True)
             height += 50
-
 
         self.max_add_label.move(3 * (self.width // 4) - 25, self.height // 4 - 50)
         self.max_add_label.resize(200, 20)
@@ -141,7 +136,6 @@ class ingredients(QDialog, QWidget):
                 x.clear()
                 return
 
-
     def clear(self):
         for x in self.ing:
             x.clear()
@@ -150,7 +144,27 @@ class ingredients(QDialog, QWidget):
         self.time.clear()
 
     def submit(self):
-        if any([x.isEnabled() and x.text() == '' for x in self.ing]):
+        set_of_ing = set()
+        duplicates = ''
+        count = 0
+        for x in self.ing:
+            if x.isEnabled() and x.text() in set_of_ing:
+                duplicates += x.text()
+                count += 1
+            else:
+                set_of_ing.add(x.text())
+
+        if len(duplicates) != 0:
+            contains_duplicates = QMessageBox()
+            contains_duplicates.setWindowTitle("Error")
+            if count == 1:
+                contains_duplicates.setText(f'Ingredient {duplicates} appears more than once.')
+            else:
+                contains_duplicates.setText(f'Ingredients {duplicates} appear more than once.')
+            contains_duplicates.setIcon(QMessageBox.Critical)
+            x = contains_duplicates.exec_()
+
+        elif any([x.isEnabled() and x.text() == '' for x in self.ing]):
             # self.submit.setStyleSheet("border :2px solid ;"
             #                      "border-top-color : red; "
             #                      "border-left-color : red;"
@@ -158,7 +172,7 @@ class ingredients(QDialog, QWidget):
             #                      "border-bottom-color : red")
             warning = QMessageBox()
             warning.setWindowTitle("Error")
-            warning.setText('Did not fill all the needed information')
+            warning.setText('Did not fill all the needed information.')
             warning.setIcon(QMessageBox.Critical)
             x = warning.exec_()
 
