@@ -61,6 +61,7 @@ class ingredients(QDialog, QWidget):
         self.center()
 
         self.line_edit = None
+        self.user_input = None
 
 
     def InitWindow(self):
@@ -200,7 +201,17 @@ class ingredients(QDialog, QWidget):
         else:
             self.hide()
             if self.third_page is None:
+
+                # self.user_input = [x.text() for x in self.ing if x.isEnabled()]
                 self.third_page = third_page.Recipes()
+                # temp= ''
+                # for x in self.ing:
+                #     if x.isEnabled():
+                #         temp += x.text() +
+                user_input = ','.join([x.text() for x in self.ing if x.isEnabled()])
+                time = self.time.text()
+                self.third_page.time.setText(time)
+                self.third_page.inputs.setText(user_input)
                 self.third_page.show()
 
             # if self.time.text() == '0':
