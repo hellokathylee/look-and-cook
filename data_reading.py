@@ -26,7 +26,7 @@ WORDS_TO_REMOVE = {'packages', 'cups', 'cup', 'tablespoons', 'tablespoon', 'teas
                    'teaspoons', 'packets', 'pounds', 'pound', 'inch', 'ounces', 'drops',
                    'dashes', 'jar', 'dash', 'envelope', 'container', 'package', 'crushed',
                    'ounce', 'cans', 'can', 'loaves', 'bottle', 'packet', 'tube', 'bottle',
-                   'sheets', 'recipe', 'peeled and chopped'}
+                   'sheets', 'recipe', 'peeled and chopped', 'bunch'}
 
 # Key words of ingredients to remove
 REMOVE_INGREDIENTS1 = {'marinate', 'low fat', 'breakfast', 'england', ' 2', 'fry', 'side',
@@ -39,7 +39,7 @@ REMOVE_INGREDIENTS1 = {'marinate', 'low fat', 'breakfast', 'england', ' 2', 'fry
                        'peeled and julienned', 'lunch', 'chopped', 'stemmed and rinsed',
                        's thick', 'y', 'chopped', 'drained and finely chopped', 'top round',
                        'julienned', 'cleaned', 'boil', 'calories', 'party', 'gluten', 'Filling',
-                       't', 'or less Grenadine ('}
+                       't', 'or less Grenadine (', 'ground', 'casings removed'}
 REMOVE_INGREDIENTS2 = {'rinsed and torn', 'and dried', 'rating',
                        'peeled and cubed', 'split', 'for topping', 'warmed'}
 
@@ -158,7 +158,8 @@ def clean_ingredients(data: Dict[str, list]) -> None:
                     # beginning
                     final_ingredient = ingredient[1:]
 
-                ingredients.add(final_ingredient)
+                if final_ingredient != 'y' and final_ingredient != 'to tast':
+                    ingredients.add(final_ingredient)
 
 
 def clean_ingredient_set(ingredients: set) -> Tuple:
@@ -207,7 +208,7 @@ def clean_ingredient_set(ingredients: set) -> Tuple:
             new_ingredient = None
 
         # Finally, check the ingredient doesn't contain any measurement key words.
-        elif remove[0][0]:
+        elif ingredient != 'canola oil' and remove[0][0]:
             word = remove[0][1]
             beginning = ingredient.index(word)
             word_end_index = beginning + len(word)
@@ -218,7 +219,13 @@ def clean_ingredient_set(ingredients: set) -> Tuple:
             if 'to taste' in new_ingredient:
                 # If the substring 'to taste' is in the ingredient, remove the 'to taste'
                 index = new_ingredient.index('to taste')
-                new_ingredient = new_ingredient[:index]
+                new_ingredient = new_ingredient[:index - 1]
+        else:
+            if 'to taste' in ingredient:
+                # If the substring 'to taste' is in the ingredient, remove the 'to taste'
+                index = ingredient.index('to taste')
+                new_ingredient = ingredient[:index - 1]
+                ingredients_to_remove.add(ingredient)
 
         ingredients_to_add.add(new_ingredient)
 
