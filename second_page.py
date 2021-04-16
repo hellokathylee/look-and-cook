@@ -2,7 +2,8 @@
 # import PyQt5.QtGui as qtg
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QApplication, QLabel, QDialog, QVBoxLayout, QWidget, QDesktopWidget, \
-    QMainWindow, QPushButton, QCompleter, QLineEdit, QListWidget, QListView, QHBoxLayout, QAction, QMessageBox
+    QMainWindow, QPushButton, QCompleter, QLineEdit, QListWidget, QListView, QHBoxLayout, QAction, \
+    QMessageBox
 from PyQt5.QtCore import Qt
 import sys
 from PyQt5 import QtGui
@@ -43,7 +44,6 @@ class ingredients(QDialog, QWidget):
 
         self.line_edit = None
 
-
     def InitWindow(self):
         # self.setWindowIcon(QtGui.QIcon(self.icon))
         self.setGeometry(self.left, self.top, self.width, self.height)
@@ -67,8 +67,6 @@ class ingredients(QDialog, QWidget):
         self.list.setFixedSize(250, 500)
         vbox.addWidget(self.list)
         self.setLayout(vbox)
-
-
 
         # Add button
         add = QPushButton("Add", self)
