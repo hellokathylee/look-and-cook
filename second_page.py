@@ -231,7 +231,8 @@ class ingredients(QDialog, QWidget):
             if self.time.text() == '0':
                 next_page = QMessageBox()
                 next_page.setWindowTitle("Next")
-                next_page.setText('You did not set your time, would you still like to submit?')
+                next_page.setText('You did not specify the maximum time,'
+                                  ' would you still like to submit?')
                 next_page.setIcon(QMessageBox.Question)
                 # next_page.setStandardButtons(QMessageBox.Cancel | QMessageBox.Yes)
                 x = next_page.exec_()
