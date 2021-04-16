@@ -8,14 +8,14 @@ from PyQt5.QtCore import Qt
 import sys
 from PyQt5 import QtGui
 from PyQt5.QtGui import QPixmap, QDoubleValidator, QValidator
-import data_reading
+import data_reading, third_page
 
 
 class ingredients(QDialog, QWidget):
     def __init__(self):
         super().__init__()
 
-
+        self.third_page = None
 
 
         self.ingredient = QLabel("Ingredients", self)
@@ -74,6 +74,7 @@ class ingredients(QDialog, QWidget):
         testing = ['check', 'one', 'two', 'three', 'white pepper', 'blue pepper']
         completer = QCompleter(self.clean)
         completer.setFilterMode(Qt.MatchContains)
+        completer.setCaseSensitivity(Qt.CaseInsensitive)
 
         self.ing1.setCompleter(completer)
         self.ing1.move(30, 100)
@@ -197,19 +198,37 @@ class ingredients(QDialog, QWidget):
             x = invalid.exec_()
 
         else:
-            if self.time.text() == '0':
-                next_page = QMessageBox()
-                next_page.setWindowTitle("Next")
-                next_page.setText('You did not specify the maximum time,'
-                                  ' would you still like to submit?')
-                next_page.setIcon(QMessageBox.Question)
-                next_page.setStandardButtons(QMessageBox.Cancel | QMessageBox.Yes)
-                x = next_page.exec_()
+            self.hide()
+            if self.third_page is None:
+                self.third_page = third_page.Recipes()
+                self.third_page.show()
+
+            # if self.time.text() == '0':
+            #     # next_page = QMessageBox()
+            #     # next_page.setWindowTitle("Next")
+            #     # next_page.setText('You did not specify the maximum time,'
+            #     #                   ' would you still like to submit?')
+            #     # next_page.setIcon(QMessageBox.Question)
+            #     # next_page.setStandardButtons(QMessageBox.Cancel | QMessageBox.Yes)
+            #     # # next_page.buttonClicked.connect(self.third_page)
+            #
+            #     check = QMessageBox.Question(self, 'testing', 'hopefully it works')
+            #     # if check == QMessageBox.Yes:
+            #     #     print('yay')
+
+
+                # x = next_page.exec_()
+    # def open(self):
 
 
     # def third_page(self, i):
-    #     if i == "Yes":
-
+    #     print(i.text())
+    #     # if i == "Yes":
+    #     #     self.hide()
+    #     #     if self.third_page is None:
+    #     #
+    #     #         self.third_page = third_page.Recipes()
+    #     #         self.third_page.show()
 
     def center(self):  # Used top center the window on the desktop
         qr = self.frameGeometry()
