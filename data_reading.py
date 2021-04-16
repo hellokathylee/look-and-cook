@@ -89,7 +89,13 @@ def get_ingredients(data: Dict[str, list]) -> set:
     for i in data:
         ing.update(data[i][7])
 
-    return ing
+    capitalize = set()
+
+    for m in ing:
+        capitalized = m.capitalize()
+        capitalize.add(capitalized)
+
+    return capitalize
 
 
 def get_review_scores(file: csv) -> Dict[str, float]:
