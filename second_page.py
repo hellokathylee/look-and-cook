@@ -57,6 +57,7 @@ class ingredients(QDialog, QWidget):
         vbox.addWidget(self.line_edit, alignment=Qt.AlignLeft)
         self.setLayout(vbox)
 
+
     def InitWindow(self):
         # self.setWindowIcon(QtGui.QIcon(self.icon))
         self.setGeometry(self.left, self.top, self.width, self.height)
