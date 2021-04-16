@@ -22,6 +22,7 @@ from PyQt5.QtCore import Qt
 import sys
 from PyQt5 import QtGui
 from PyQt5.QtGui import QPixmap
+import second_page
 
 
 class MainWindow(QDialog, QWidget):
@@ -34,6 +35,7 @@ class MainWindow(QDialog, QWidget):
         self.height = 450
         self.InitWindow()
         self.center()
+        self.second_page = None
     # Make icon too
     # self.setWindowTitle("Look and Cook")  # Setting a title for the window
 
@@ -72,18 +74,30 @@ class MainWindow(QDialog, QWidget):
 
     def clicked(self):
         self.hide()
-        mydialog = QDialog(self)
-        # mydialog.setModal(True)
-        # mydialog.exec_()
-        # Copied it from center, figure out why it didnt work before
-        mydialog.setGeometry(self.left, self.top, self.width, self.height)
-        qr = mydialog.frameGeometry()
-        cp = QDesktopWidget().availableGeometry().center()
-        qr.moveCenter(cp)
-        mydialog.move(qr.topLeft())
+        # mydialog = QDialog(self)
+        # # mydialog.setModal(True)
+        # # mydialog.exec_()
+        # # Copied it from center, figure out why it didnt work before
+        # mydialog.setGeometry(self.left, self.top, self.width, self.height)
+        # qr = mydialog.frameGeometry()
+        # cp = QDesktopWidget().availableGeometry().center()
+        # qr.moveCenter(cp)
+        # mydialog.move(qr.topLeft())
+        #
+        # # Things in the second window
+        # mydialog.label = QLabel('Ingredients')
+        # # test = QtWidgets.QWidget()
+        # # label = QtWidgets.QLabel(test)
+        # # label.setText('Ingredients')
+        # mydialog.label.move(500, 70)
+        if self.second_page is None:
+            self.second_page = second_page.ingredients()
+            self.second_page.show()
+            # self.second_page.activate
+
+            #        mydialog.show()
 
 
-        mydialog.show()
 
 
 if __name__ == "__main__":
