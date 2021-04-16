@@ -52,6 +52,7 @@ class ingredients(QDialog, QWidget):
             self.list.insertItem(i, self.clean[i])
         # self.list.setResizeMode(QListView_ResizeMode=)
 
+
         self.title = "Page 2"
         self.left = 500
         self.top = 200
@@ -75,47 +76,21 @@ class ingredients(QDialog, QWidget):
         completer = QCompleter(self.clean)
         completer.setFilterMode(Qt.MatchContains)
 
+
+
         self.ing1.setCompleter(completer)
         # self.ing1.setFixedSize(100, 50)
         # vbox.addWidget(self.ing1, alignment= Qt.Align)
         self.ing1.move(30, 100)
+        self.ing1.setFixedSize(150, 30)
+        height = 150
+        for x in self.ing[1:]:
+            x.setCompleter(completer)
+            x.move(30, height)
+            x.setFixedSize(150, 30)
+            x.setDisabled(True)
+            height += 50
 
-        self.ing2.setCompleter(completer)
-        # self.ing2.setFixedSize(100, 50)
-        self.ing2.move(30, 150)
-        self.ing2.setDisabled(True)
-
-        self.ing3.setCompleter(completer)
-        self.ing3.move(30, 200)
-        self.ing3.setDisabled(True)
-
-        self.ing4.setCompleter(completer)
-        self.ing4.move(30, 250)
-        self.ing4.setDisabled(True)
-
-        self.ing5.setCompleter(completer)
-        self.ing5.move(30, 300)
-        self.ing5.setDisabled(True)
-
-        self.ing6.setCompleter(completer)
-        self.ing6.move(30, 350)
-        self.ing6.setDisabled(True)
-
-        self.ing7.setCompleter(completer)
-        self.ing7.move(30, 400)
-        self.ing7.setDisabled(True)
-
-        self.ing8.setCompleter(completer)
-        self.ing8.move(30, 450)
-        self.ing8.setDisabled(True)
-
-        self.ing9.setCompleter(completer)
-        self.ing9.move(30, 500)
-        self.ing9.setDisabled(True)
-
-        self.ing10.setCompleter(completer)
-        self.ing10.move(30, 550)
-        self.ing10.setDisabled(True)
 
         self.max_add_label.move(3 * (self.width // 4) - 25, self.height // 4 - 50)
         self.max_add_label.resize(200, 20)
@@ -165,33 +140,7 @@ class ingredients(QDialog, QWidget):
                 x.setDisabled(True)
                 x.clear()
                 return
-        # if self.ing10.isEnabled():
-        #     self.ing10.setDisabled(True)
-        #     self.ing10.clear()
-        # elif self.ing9.isEnabled():
-        #     self.ing9.setDisabled(True)
-        #     self.ing9.clear()
-        # elif self.ing8.isEnabled():
-        #     self.ing8.setDisabled(True)
-        #     self.ing8.clear()
-        # elif self.ing7.isEnabled():
-        #     self.ing7.setDisabled(True)
-        #     self.ing7.clear()
-        # elif self.ing6.isEnabled():
-        #     self.ing6.setDisabled(True)
-        #     self.ing6.clear()
-        # elif self.ing5.isEnabled():
-        #     self.ing5.setDisabled(True)
-        #     self.ing5.clear()
-        # elif self.ing4.isEnabled():
-        #     self.ing4.setDisabled(True)
-        #     self.ing4.clear()
-        # elif self.ing3.isEnabled():
-        #     self.ing3.setDisabled(True)
-        #     self.ing3.clear()
-        # elif self.ing2.isEnabled():
-        #     self.ing2.setDisabled(True)
-        #     self.ing2.clear()
+
 
     def clear(self):
         for x in self.ing:
@@ -214,27 +163,33 @@ class ingredients(QDialog, QWidget):
             x = warning.exec_()
 
         elif not all([x.text() in self.clean for x in self.ing if x.isEnabled()]):
-            invalid_ingrdnt = None
+            invalid_ingrdnt = ''
+            count = 0
             for x in self.ing:
                 if x.text() not in self.clean and x.isEnabled():
-                    invalid_ingrdnt = x.text()
+                    invalid_ingrdnt += x.text() + ', '
+
+                    count += 1
+            invalid_ingrdnt = invalid_ingrdnt.strip(', ')
 
             invalid = QMessageBox()
             invalid.setWindowTitle("Error")
             # invalid.setText('One or more of the ingredients are invalid')
-            invalid.setText(f"The ingredient {invalid_ingrdnt} is invalid")
+            if count == 1:
+                invalid.setText(f"The ingredient '{invalid_ingrdnt}' is invalid.")
+            else:
+                invalid.setText(f"The ingredients '{invalid_ingrdnt}' are invalid.")
             invalid.setIcon(QMessageBox.Critical)
             x = invalid.exec_()
 
         else:
-            print(type(self.time.text()))
             if self.time.text() == '0':
                 next_page = QMessageBox()
                 next_page.setWindowTitle("Next")
                 next_page.setText('You did not specify the maximum time,'
                                   ' would you still like to submit?')
                 next_page.setIcon(QMessageBox.Question)
-                # next_page.setStandardButtons(QMessageBox.Cancel | QMessageBox.Yes)
+                next_page.setStandardButtons(QMessageBox.Cancel | QMessageBox.Yes)
                 x = next_page.exec_()
 
 
