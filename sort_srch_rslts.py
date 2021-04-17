@@ -19,8 +19,8 @@ from typing import Dict, List
 import data_type
 
 
-def time_sort(data: Dict[str, list], max_mins: int = None, dec_ord: bool = False) \
-        -> List[tuple]:
+def time_sort(data: List[tuple], recipe_data: Dict[str, list],
+              max_mins: int, dec_ord: bool = False) -> List[tuple]:
     """Return a list of recipes from data sorted in increasing or decreasing order
     of the total time of the recipes depending on dec_ord. The total time of the recipes
     returned is less than the maximum minutes max_mins.
@@ -29,38 +29,90 @@ def time_sort(data: Dict[str, list], max_mins: int = None, dec_ord: bool = False
     """
     times = {}
     sorted_recipes = []
-    data_copy = data.copy()  # to not mutate the input
+    # data_copy = data.copy()  # to not mutate the input
 
-    for recipe_id in data:
-        total_time = data_copy[recipe_id][6]
+    for item in data:  # item = (recipe id, other attributes)
+        total_time = item[1][6]
         total_time.replace(" ", "")  # remove the whitespace
 
         if total_time != "X":
             day, hour, minute = _split_time(total_time)
 
             minutes = (24 * 60 * int(day)) + (60 * int(hour)) + int(minute)
-            times[recipe_id] = minutes  # convert time to mins
+            times[item[0]] = minutes  # convert time to mins
 
         else:
-            data_copy.pop(recipe_id)
+            data.remove(item)
 
     # sort by value
     if dec_ord:
         sorted_times = sorted(times.items(), key=lambda x: x[1], reverse=True)
-
     else:
         sorted_times = sorted(times.items(), key=lambda x: x[1])
 
+    # if max_mins == 0:
+    #     for item in sorted_times:
+    #         sorted_recipes.append((item[0], data_copy[item[0]]))
+    # else:
+    #     for item in sorted_times:
+    #         if int(item[1]) <= max_mins:
+    #             sorted_recipes.append((item[0], data_copy[item[0]]))
+    #             # use list instead of dictionary to maintain sort order
+
     if max_mins == 0:
         for item in sorted_times:
-            sorted_recipes.append((item[0], data_copy[item[0]]))
+            sorted_recipes.append((item[0], recipe_data[item[0]]))
     else:
         for item in sorted_times:
-            if int(item[1]) <= max_mins:
-                sorted_recipes.append((item[0], data_copy[item[0]]))
-            # use list instead of dictionary to maintain sort order
+            if item[1] <= max_mins:
+                sorted_recipes.append((item[0], recipe_data[item[0]]))
+                # use list instead of dictionary to maintain sort order
 
-    return sorted_recipes
+    return sorted_recipes[:100]
+
+
+# def time_sort(data: Dict[str, list], max_mins: int = None, dec_ord: bool = False) \
+#         -> List[tuple]:
+#     """Return a list of recipes from data sorted in increasing or decreasing order
+#     of the total time of the recipes depending on dec_ord. The total time of the recipes
+#     returned is less than the maximum minutes max_mins.
+#
+#     If total time of a recipe is not available, do not include it in the return value.
+#     """
+#     times = {}
+#     sorted_recipes = []
+#     data_copy = data.copy()  # to not mutate the input
+#
+#     for recipe_id in data:
+#         total_time = data_copy[recipe_id][6]
+#         total_time.replace(" ", "")  # remove the whitespace
+#
+#         if total_time != "X":
+#             day, hour, minute = _split_time(total_time)
+#
+#             minutes = (24 * 60 * int(day)) + (60 * int(hour)) + int(minute)
+#             times[recipe_id] = minutes  # convert time to mins
+#
+#         else:
+#             data_copy.pop(recipe_id)
+#
+#     # sort by value
+#     if dec_ord:
+#         sorted_times = sorted(times.items(), key=lambda x: x[1], reverse=True)
+#
+#     else:
+#         sorted_times = sorted(times.items(), key=lambda x: x[1])
+#
+#     if max_mins == 0:
+#         for item in sorted_times:
+#             sorted_recipes.append((item[0], data_copy[item[0]]))
+#     else:
+#         for item in sorted_times:
+#             if int(item[1]) <= max_mins:
+#                 sorted_recipes.append((item[0], data_copy[item[0]]))
+#             # use list instead of dictionary to maintain sort order
+#
+#     return sorted_recipes
 
 
 def _split_time(time: str) -> list[str]:
@@ -120,7 +172,7 @@ def ingrdnt_sort(data: Dict[str, list], user_ingrdnts: list, graph: data_type.Gr
         sorted_recipes.append((item[0], data[item[0]]))
         # use list instead of dictionary to maintain sort order
 
-    return sorted_recipes
+    return sorted_recipes[:100]
 
 # sample test run - ingrdnt_sort
 #
