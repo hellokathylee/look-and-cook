@@ -1,14 +1,22 @@
-# import PyQt5.QtWidgets as qtw
-# import PyQt5.QtGui as qtg
-from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QApplication, QLabel, QDialog, QVBoxLayout, QWidget, QDesktopWidget, \
-    QMainWindow, QPushButton, QCompleter, QLineEdit, QListWidget, QListView, QHBoxLayout, QAction, \
-    QMessageBox, QSpinBox
-from PyQt5.QtCore import Qt
-import sys
-from PyQt5 import QtGui
-from PyQt5.QtGui import QPixmap, QDoubleValidator, QValidator, QIcon
-import data_reading, third_page
+"""CSC111 Winter 2021 Project Phase 2: Final Submission, Ingredients Program Window (2)
+
+Description
+===============================
+This Python module contains the visualization of the ingredients selection program window.
+
+Copyright and Usage Information
+===============================
+This file is provided solely for the personal and private use of TAs and professors
+teaching CSC111 at the University of Toronto St. George campus. All forms of
+distribution of this code, whether as given or with any changes, are
+expressly prohibited. For more information on copyright for CSC111 materials,
+please consult our Course Syllabus.
+
+This file is Copyright (c) 2021 Dana Al Shekerchi, Nehchal Kalsi, Kathy Lee, and Audrey Yoshino.
+"""
+from PyQt5.QtWidgets import QLabel, QDialog, QWidget, QDesktopWidget, QPushButton, QLineEdit
+from PyQt5.QtGui import QPixmap
+import data_reading
 import urllib
 
 
@@ -19,12 +27,17 @@ class IndividualRecipe(QDialog, QWidget):
         """Initialize an instance of the IndividualRecipe window.
         """
         super().__init__()
+        self.recipe_name = recipe_name
 
-        # self.third_page = None
+        self.recipe_title = QLabel(self.recipe_name, self)
 
         self.selected_recipe = QLineEdit()  # get recipe id, if possible
         self.data = data_reading.read_recipes(data_reading.RECIPES_FILE)
         data_reading.clean_ingredients(self.data)
+
+        for x in self.data:
+            if self.data[x][0] == self.recipe_name:
+                self.selected_recipe = x
 
         # self.ingredient = QLabel("Ingredients", self)
         # self.ingredient.move(30, 50)
@@ -75,35 +88,35 @@ class IndividualRecipe(QDialog, QWidget):
         """Open the fourth window on the user's screen with the provided dimensions.
         """
         # self.setWindowIcon(QtGui.QIcon(self.icon))
-        self.setGeometry(self.left, self.top, self.width, self.height)
-        self.setWindowTitle(self.title)
-
-        recipe_name = QLabel(f"{self.data[self.selected_recipe.text()][0]}", self)
-        recipe_name.move(3 * (self.width // 4) - 25, self.height // 4 - 50)
-        recipe_name.resize(200, 20)
-
-        author = QLabel(f"{self.data[self.selected_recipe.text()][3]}", self)
-        author.move(3 * (self.width // 4) - 25, self.height // 4 - 50)
-
-        scores_dict = data_reading.get_review_scores("data/clean_reviews.csv")
-        review_score = QLabel(f"{scores_dict[self.selected_recipe]}", self)
-        review_score.move(3 * (self.width // 4) - 25, self.height // 4 - 50)
-
-        url = self.data[self.selected_recipe.text()][2]
-        pic_data = urllib.urlopen(url).read()
-        picture = QLabel()
-        pixmap = QPixmap()
-        pixmap.loadFromData(pic_data)
-        # icon = QIcon(pixmap)
-        picture.setPixmap(pixmap)
-        # picture = QLabel(f"{self.data[self.selected_recipe.text()][2]}", self)
-
-        # add for loop or something to separate ings and directions
-        recipe_ingredients = QLabel(f"{self.data[self.selected_recipe.text()][7]}", self)
-        recipe_ingredients.setWordWrap(True)
-
-        directions = QLabel(f"{self.data[self.selected_recipe.text()][8]}", self)
-        directions.setWordWrap(True)
+        # self.setGeometry(self.left, self.top, self.width, self.height)
+        # self.setWindowTitle(self.title)
+        #
+        # recipe_name = QLabel(f"{self.data[self.selected_recipe.text()][0]}", self)
+        # recipe_name.move(3 * (self.width // 4) - 25, self.height // 4 - 50)
+        # recipe_name.resize(200, 20)
+        #
+        # author = QLabel(f"{self.data[self.selected_recipe.text()][3]}", self)
+        # author.move(3 * (self.width // 4) - 25, self.height // 4 - 50)
+        #
+        # scores_dict = data_reading.get_review_scores("data/clean_reviews.csv")
+        # review_score = QLabel(f"{scores_dict[self.selected_recipe]}", self)
+        # review_score.move(3 * (self.width // 4) - 25, self.height // 4 - 50)
+        #
+        # url = self.data[self.selected_recipe.text()][2]
+        # pic_data = urllib.urlopen(url).read()
+        # picture = QLabel()
+        # pixmap = QPixmap()
+        # pixmap.loadFromData(pic_data)
+        # # icon = QIcon(pixmap)
+        # picture.setPixmap(pixmap)
+        # # picture = QLabel(f"{self.data[self.selected_recipe.text()][2]}", self)
+        #
+        # # add for loop or something to separate ings and directions
+        # recipe_ingredients = QLabel(f"{self.data[self.selected_recipe.text()][7]}", self)
+        # recipe_ingredients.setWordWrap(True)
+        #
+        # directions = QLabel(f"{self.data[self.selected_recipe.text()][8]}", self)
+        # directions.setWordWrap(True)
 
         # self.in
 
@@ -155,13 +168,13 @@ class IndividualRecipe(QDialog, QWidget):
         # label_test = QLabel('Text')
         # label_test.move(50, 70)
 
-        review_button = QPushButton("Reviews", self)
-        review_button.move(3 * (self.width // 4), self.height + 25)
-        review_button.clicked.connect(self.user_reviews())
-
-        submit = QPushButton("Submit", self)
-        submit.move(3 * (self.width // 4), self.height + 75)
-        submit.clicked.connect(self.submit)
+        # review_button = QPushButton("Reviews", self)
+        # review_button.move(3 * (self.width // 4), self.height + 25)
+        # review_button.clicked.connect(self.user_reviews())
+        #
+        # submit = QPushButton("Submit", self)
+        # submit.move(3 * (self.width // 4), self.height + 75)
+        # submit.clicked.connect(self.submit)
 
         self.show()
 
@@ -177,13 +190,13 @@ class IndividualRecipe(QDialog, QWidget):
     #             x.clear()
     #             return
 
-    def user_reviews(self):
-        # ask dana
-        # how to open a new window
-        reviews_dict = data_reading.get_reviews("data/reviews.csv")
-
-        reviews = QLabel(f"{reviews_dict[self.selected_recipe]}", self)
-        reviews.setWordWrap(True)
+    # def user_reviews(self):
+    #     # ask dana
+    #     # how to open a new window
+    #     reviews_dict = data_reading.get_reviews("data/reviews.csv")
+    #
+    #     reviews = QLabel(f"{reviews_dict[self.selected_recipe]}", self)
+    #     reviews.setWordWrap(True)
 
     # def submit(self):
     #     set_of_ing = set()

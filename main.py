@@ -14,23 +14,13 @@ please consult our Course Syllabus.
 
 This file is Copyright (c) 2021 Dana Al Shekerchi, Nehchal Kalsi, Kathy Lee, and Audrey Yoshino.
 """
-# import PyQt5.QtWidgets as qtw TODO remove this and the following???
-# import PyQt5.QtGui as qtg
-# from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QApplication, QLabel, QDialog, QVBoxLayout, QWidget, QDesktopWidget, \
-    QPushButton  # QMainWindow TODO remove???
+    QPushButton
 from PyQt5.QtCore import Qt
 import sys
 from PyQt5 import QtGui
 from PyQt5.QtGui import QPixmap, QIcon, QFont
-import second_page
-
-# TEAL = rgb(35, 87, 77) TODO remove before submitting
-# CORAL = rgb(211, 104, 80)
-# YELLOW = rgb(210, 146, 68)
-# MINT = rgb(35, 87, 77)
-# PINK = rgb(224, 182, 157)
-# BEIGE = rgb(240, 225, 204)
+from ingredients_dialogue import IngredientsDialogue
 
 
 class MainWindow(QDialog, QWidget):
@@ -42,6 +32,7 @@ class MainWindow(QDialog, QWidget):
         """Initialize an instance of MainWindow.
         """
         super().__init__()
+        # Sets up the screen with all the needed elements
         self.title = "Look and Cook"
         self.left = 500
         self.top = 200
@@ -49,17 +40,11 @@ class MainWindow(QDialog, QWidget):
         self.height = 700
         self.init_window()
         self.center()
-        self.second_page = None
+        self.ingredients_dialogue = None
         self.setFixedSize(700, 700)
         self.setStyleSheet("background-color: rgb(240, 225, 204)")
         self.setWindowIcon(QIcon('visuals/L&C Icon.PNG'))
-    # self.setWindowTitle("Look and Cook")  # Setting a title for the window
-
-    # # To make a label
-    # label = qtw.QLabel("hi")
-    # # Change Size
-    # label.setFont(qtg.QFont("Helvetica", 18))
-    # self.layout().addWidget(label)
+        self.setWindowTitle("Look and Cook")
 
     def center(self) -> None:
         """Center MainWindow on the provided desktop screen.
@@ -77,13 +62,13 @@ class MainWindow(QDialog, QWidget):
         self.setGeometry(self.left, self.top, self.width, self.height)
         self.setWindowTitle(self.title)
 
+        # Centers the title in the center of the page
         vbox = QVBoxLayout()
-        # for title image
         image = QLabel()
         pixmap = QPixmap("visuals/L&C Logo.png").scaled(500, 500, 1)
         image.setPixmap(pixmap)
-
         vbox.addWidget(image, alignment=Qt.AlignCenter)
+        self.setLayout(vbox)
 
         # Start button
         btn_start = QPushButton("Start!", self)
@@ -92,39 +77,18 @@ class MainWindow(QDialog, QWidget):
         btn_start.setStyleSheet("border-radius: 50; background-color: rgb(210, 146, 68); "
                                 "color: rgb(240, 225, 204)")
         btn_start.setFont(QFont('Georgia', 12, weight=QtGui.QFont.Bold))
-
         btn_start.clicked.connect(self.clicked)
 
-        self.setLayout(vbox)
-        self.show()  # Opens the window
+        # Opens the window
+        self.show()
 
     def clicked(self) -> None:
         """Link the start button to the second window displaying ingredient choices.
         """
         self.hide()
-        # mydialog = QDialog(self)
-        # mydialog = QDialog(self)
-        # # mydialog.setModal(True)
-        # # mydialog.exec_()
-        # # Copied it from center, figure out why it didn't work before
-        # mydialog.setGeometry(self.left, self.top, self.width, self.height)
-        # qr = mydialog.frameGeometry()
-        # cp = QDesktopWidget().availableGeometry().center()
-        # qr.moveCenter(cp)
-        # mydialog.move(qr.topLeft())
-        #
-        # # Things in the second window
-        # mydialog.label = QLabel('Ingredients')
-        # # test = QtWidgets.QWidget()
-        # # label = QtWidgets.QLabel(test)
-        # # label.setText('Ingredients')
-        # mydialog.label.move(500, 70)
-        if self.second_page is None:
-            self.second_page = second_page.Ingredients()
-            self.second_page.show()
-            # self.second_page.activate
-
-            #        mydialog.show()
+        if self.ingredients_dialogue is None:
+            self.ingredients_dialogue = IngredientsDialogue()
+            self.ingredients_dialogue.show()
 
 
 if __name__ == "__main__":
