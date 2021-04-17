@@ -89,13 +89,7 @@ def get_ingredients(data: Dict[str, list]) -> set:
     for i in data:
         ing.update(data[i][7])
 
-    capitalize = set()
-
-    for m in ing:
-        capitalized = m.capitalize()
-        capitalize.add(capitalized)
-
-    return capitalize
+    return ing
 
 
 def get_review_scores(file: csv) -> Dict[str, float]:
@@ -166,6 +160,15 @@ def clean_ingredients(data: Dict[str, list]) -> None:
 
                 if final_ingredient != 'y' and final_ingredient != 'to tast':
                     ingredients.add(final_ingredient)
+
+        capitalized = set()
+
+        # Capitalize all ingredients in the ingredients corresponding to a given recipe
+        for ingredient in ingredients:
+            capitalize = ingredient.capitalize()
+            capitalized.add(capitalize)
+
+        data[recipe][7] = capitalized
 
 
 def clean_ingredient_set(ingredients: set) -> Tuple:
