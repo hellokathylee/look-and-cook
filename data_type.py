@@ -1,7 +1,8 @@
-"""CSC111 Winter 2021 Project Phase 2: Final Submission: #TODO
+"""CSC111 Winter 2021 Project Phase 2, Creating Data Types
 Description
 ===============================
-This Python module contains #TODO
+This Python module contains classes to initialize instances of _Vertex and Graph, as well
+as a function to load a graph given recipe data.
 
 Copyright and Usage Information
 ===============================
@@ -173,17 +174,6 @@ def load_graph(recipes_file: str) -> Graph:
 
     Preconditions:
         - recipes_file is the path to a CSV file corresponding to the recipes data
-
-    >>> g = load_graph('data/clean_recipes.csv')
-    >>> len(g.get_all_vertices(kind='recipe'))
-    12351
-    >>> len(g.get_all_vertices(kind='ingredient'))
-    943
-    >>> peach_coffee_cake = g.get_neighbours('27546')
-    >>> len(peach_coffee_cake)
-    11
-    >>> "peach" in peach_coffee_cake
-    True
     """
     graph = Graph()  # start of a Graph
     data = data_reading.read_recipes(recipes_file)

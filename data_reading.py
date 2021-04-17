@@ -162,8 +162,7 @@ def clean_ingredients(data: Dict[str, list]) -> None:
                     # beginning
                     final_ingredient = ingredient[1:]
 
-                if final_ingredient != 'y' and final_ingredient != 'to tast' \
-                        and final_ingredient != 't':
+                if final_ingredient not in {'y', 'to tast', 't'}:
                     ingredients.add(final_ingredient)
 
         capitalized = set()

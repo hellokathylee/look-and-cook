@@ -13,7 +13,11 @@ import urllib
 
 
 class IndividualRecipe(QDialog, QWidget):
+    """Class representing fourth window of program which displays a single recipe as selected
+    by the user in the third window."""
     def __init__(self):
+        """Initialize an instance of the IndividualRecipe window.
+        """
         super().__init__()
 
         # self.third_page = None
@@ -68,6 +72,8 @@ class IndividualRecipe(QDialog, QWidget):
         self.user_input = None
 
     def InitWindow(self):
+        """Open the fourth window on the user's screen with the provided dimensions.
+        """
         # self.setWindowIcon(QtGui.QIcon(self.icon))
         self.setGeometry(self.left, self.top, self.width, self.height)
         self.setWindowTitle(self.title)
@@ -274,6 +280,8 @@ class IndividualRecipe(QDialog, QWidget):
     #     #         self.third_page.show()
 
     def center(self):  # Used top center the window on the desktop
+        """Function to center third window on the provided desktop screen.
+        """
         qr = self.frameGeometry()
         cp = QDesktopWidget().availableGeometry().center()
         qr.moveCenter(cp)
