@@ -13,7 +13,15 @@ import data_reading, sort_srch_rslts, second_page, data_type
 
 
 class Recipes(QDialog, QWidget):
-    def __init__(self):
+    """Class representing third window of program which displays the recipes filtered by the
+    ingredients inputted by the user.
+
+    Instance attributes:
+        - #TODO
+    """
+    def __init__(self) -> None:
+        """Initialize an instance of the recipes window.
+        """
         super().__init__()
 
         self.ingredient = QLabel("Ingredients", self)
@@ -62,7 +70,9 @@ class Recipes(QDialog, QWidget):
         self.InitWindow()
         self.center()
 
-    def InitWindow(self):
+    def InitWindow(self) -> None:
+        """Open the third window on the user's screen with the provided dimensions.
+        """
         self.setGeometry(self.left, self.top, self.width, self.height)
         self.setWindowTitle(self.title)
 
@@ -95,7 +105,13 @@ class Recipes(QDialog, QWidget):
     # def sort_by(self):
     #     self.sort_time.clear()
 
-    def sort(self, i):
+    def sort(self, i: int) -> None:
+        """Function to sort recipes by either time or number of ingredients inputted by the user
+        utilized in the displayed recipes.
+
+        Representation invariants:
+            - i == 0 or i == 1 # TODO: not sure if this is correct
+        """
         if i == 0:
             # data = data_reading.read_recipes(data_reading.RECIPES_FILE)
             # data_reading.clean_ingredients(data)
@@ -120,7 +136,9 @@ class Recipes(QDialog, QWidget):
             # for i in range(len(recipe_names)):
             #     self.recipes.insertItem(i, recipe_names[i])
 
-    def center(self):  # Used top center the window on the desktop
+    def center(self) -> None:
+        """Function to center third window on the provided desktop screen.
+        """
         qr = self.frameGeometry()
         cp = QDesktopWidget().availableGeometry().center()
         qr.moveCenter(cp)

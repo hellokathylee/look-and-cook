@@ -39,9 +39,10 @@ REMOVE_INGREDIENTS1 = {'marinate', 'low fat', 'breakfast', 'england', ' 2', 'fry
                        'peeled and julienned', 'lunch', 'chopped', 'stemmed and rinsed',
                        's thick', 'y', 'chopped', 'drained and finely chopped', 'top round',
                        'julienned', 'cleaned', 'boil', 'calories', 'party', 'gluten', 'Filling',
-                       't', 'or less Grenadine (', 'ground', 'casings removed'}
+                       't', 'or less Grenadine (', 'ground', 'casings removed', 'chili', 'snow',
+                       'chill'}
 REMOVE_INGREDIENTS2 = {'rinsed and torn', 'and dried', 'rating',
-                       'peeled and cubed', 'split', 'for topping', 'warmed'}
+                       'peeled and cubed', 'split', 'for topping', 'warmed', '\x99'}
 
 
 def read_recipes(file: str) -> Dict[str, list]:
@@ -158,7 +159,8 @@ def clean_ingredients(data: Dict[str, list]) -> None:
                     # beginning
                     final_ingredient = ingredient[1:]
 
-                if final_ingredient != 'y' and final_ingredient != 'to tast':
+                if final_ingredient != 'y' and final_ingredient != 'to tast' \
+                        and final_ingredient != 't':
                     ingredients.add(final_ingredient)
 
         capitalized = set()

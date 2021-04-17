@@ -23,10 +23,30 @@ import sys
 from PyQt5 import QtGui
 from PyQt5.QtGui import QPixmap
 import second_page
+from typing import Optional
 
 
 class MainWindow(QDialog, QWidget):
-    def __init__(self):
+    """Opens the initial starting window for Look and Cook.
+
+    Contains the logo, start button, and code to handle a click event.
+
+    Instance attributes:
+        - title: The title of this window
+        - left: #TODO complete instance attribute
+        - top: #TODO complete instance attribute
+        - width: The width of this window
+        - height: The height of this window
+    """
+    title: str
+    left: int
+    top: int
+    width: int
+    height: int
+
+    def __init__(self) -> None:
+        """Initialize an instance of MainWindow.
+        """
         super().__init__()
         self.title = "Look and Cook"
         self.left = 500
@@ -45,13 +65,17 @@ class MainWindow(QDialog, QWidget):
     # label.setFont(qtg.QFont("Helvetica", 18))
     # self.layout().addWidget(label)
 
-    def center(self):  # Used top center the window on the desktop
+    def center(self) -> None:
+        """Center MainWindow on the provided desktop screen.
+        """
         qr = self.frameGeometry()
         cp = QDesktopWidget().availableGeometry().center()
         qr.moveCenter(cp)
         self.move(qr.topLeft())
 
-    def InitWindow(self):
+    def InitWindow(self) -> None:
+        """Open the main window on the user's screen with the provided dimensions.
+        """
         # self.setWindowIcon(QtGui.QIcon(self.icon))
         self.setGeometry(self.left, self.top, self.width, self.height)
         self.setWindowTitle(self.title)
@@ -72,7 +96,9 @@ class MainWindow(QDialog, QWidget):
         self.setLayout(vbox)
         self.show()  # Opens the window
 
-    def clicked(self):
+    def clicked(self) -> None:
+        """Link the start button to the second window displaying ingredient choices.
+        """
         self.hide()
         # mydialog = QDialog(self)
         # # mydialog.setModal(True)
