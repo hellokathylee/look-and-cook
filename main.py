@@ -1,62 +1,55 @@
-"""CSC111 Final Project, Data Reading
+"""CSC111 Winter 2021 Project Phase 2: Final Submission, Main Program Window (1)
 
 Description
 ===============================
-This module reads the raw data from the csv file and converts it into a usable format.
-===============================
+This Python module contains the visualization of the main title program window.
 
-This file is provided solely for the personal and private use of TA's and professors
+Copyright and Usage Information
+===============================
+This file is provided solely for the personal and private use of TAs and professors
 teaching CSC111 at the University of Toronto St. George campus. All forms of
 distribution of this code, whether as given or with any changes, are
 expressly prohibited. For more information on copyright for CSC111 materials,
 please consult our Course Syllabus.
 
-This file is Copyright (c) 2020 Dana Alshekerchi, Nehchal Kalsi, Kathy Lee, Audrey Yoshino.
+This file is Copyright (c) 2021 Dana Al Shekerchi, Nehchal Kalsi, Kathy Lee, and Audrey Yoshino.
 """
-
-# import PyQt5.QtWidgets as qtw
+# import PyQt5.QtWidgets as qtw TODO remove this and the following???
 # import PyQt5.QtGui as qtg
-from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QApplication, QLabel, QDialog, QVBoxLayout, QWidget, QDesktopWidget, QMainWindow, QPushButton
+# from PyQt5 import QtWidgets
+from PyQt5.QtWidgets import QApplication, QLabel, QDialog, QVBoxLayout, QWidget, QDesktopWidget, \
+    QPushButton  # QMainWindow TODO remove???
 from PyQt5.QtCore import Qt
 import sys
 from PyQt5 import QtGui
-from PyQt5.QtGui import QPixmap
+from PyQt5.QtGui import QPixmap, QIcon, QFont
 import second_page
-from typing import Optional
+
+# TEAL = rgb(35, 87, 77) TODO remove before submitting
+# CORAL = rgb(211, 104, 80)
+# YELLOW = rgb(210, 146, 68)
+# MINT = rgb(35, 87, 77)
+# PINK = rgb(224, 182, 157)
+# BEIGE = rgb(240, 225, 204)
 
 
 class MainWindow(QDialog, QWidget):
-    """Opens the initial starting window for Look and Cook.
-
-    Contains the logo, start button, and code to handle a click event.
-
-    Instance attributes:
-        - title: The title of this window
-        - left: #TODO complete instance attribute
-        - top: #TODO complete instance attribute
-        - width: The width of this window
-        - height: The height of this window
-    """
-    title: str
-    left: int
-    top: int
-    width: int
-    height: int
+    """Program main window."""
 
     def __init__(self) -> None:
-        """Initialize an instance of MainWindow.
-        """
+        """Initializes main window."""
         super().__init__()
         self.title = "Look and Cook"
         self.left = 500
         self.top = 200
         self.width = 700
-        self.height = 450
-        self.InitWindow()
+        self.height = 700
+        self.init_window()
         self.center()
         self.second_page = None
-    # Make icon too
+        self.setFixedSize(700, 700)
+        self.setStyleSheet("background-color: rgb(240, 225, 204)")
+        self.setWindowIcon(QIcon('visuals/L&C Icon.PNG'))
     # self.setWindowTitle("Look and Cook")  # Setting a title for the window
 
     # # To make a label
@@ -66,44 +59,47 @@ class MainWindow(QDialog, QWidget):
     # self.layout().addWidget(label)
 
     def center(self) -> None:
-        """Center MainWindow on the provided desktop screen.
-        """
+        """Used top center the window on the desktop."""
         qr = self.frameGeometry()
         cp = QDesktopWidget().availableGeometry().center()
         qr.moveCenter(cp)
         self.move(qr.topLeft())
 
-    def InitWindow(self) -> None:
-        """Open the main window on the user's screen with the provided dimensions.
-        """
-        # self.setWindowIcon(QtGui.QIcon(self.icon))
+    def init_window(self) -> None:
+        """Initializes window display."""
+        # self.setWindowIcon(QtGui.QIcon(self.icon)) TODO remove this???
         self.setGeometry(self.left, self.top, self.width, self.height)
         self.setWindowTitle(self.title)
 
         vbox = QVBoxLayout()
         # for title image
-        Image = QLabel()
-        pixmap = QPixmap("testing.png")
-        Image.setPixmap(pixmap)
-        vbox.addWidget(Image, alignment=Qt.AlignCenter)
+        image = QLabel()
+        pixmap = QPixmap("visuals/L&C Logo.png").scaled(500, 500, 1)
+        image.setPixmap(pixmap)
 
-        # Button stuff
-        b1 = QPushButton("Start", self)
-        b1.move((self.width//2)-50, self.height//2 + 100)
-        b1.clicked.connect(self.clicked)
+        vbox.addWidget(image, alignment=Qt.AlignCenter)
 
+        # Start button
+        btn_start = QPushButton("Start!", self)
+        btn_start.setGeometry((self.width // 2) - 50, self.height // 2 + 200, 100, 100)
+        btn_start.move((self.width // 2) - 50, self.height // 2 + 200)
+        btn_start.setStyleSheet("border-radius: 50; background-color: rgb(210, 146, 68); "
+                                "color: rgb(240, 225, 204)")
+        btn_start.setFont(QFont('Georgia', 12, weight=QtGui.QFont.Bold))
+
+        btn_start.clicked.connect(self.clicked)
 
         self.setLayout(vbox)
         self.show()  # Opens the window
 
     def clicked(self) -> None:
-        """Link the start button to the second window displaying ingredient choices.
-        """
+        """Button click event."""
         self.hide()
+        # mydialog = QDialog(self)
         # mydialog = QDialog(self)
         # # mydialog.setModal(True)
         # # mydialog.exec_()
-        # # Copied it from center, figure out why it didnt work before
+        # # Copied it from center, figure out why it didn't work before
         # mydialog.setGeometry(self.left, self.top, self.width, self.height)
         # qr = mydialog.frameGeometry()
         # cp = QDesktopWidget().availableGeometry().center()
@@ -117,13 +113,11 @@ class MainWindow(QDialog, QWidget):
         # # label.setText('Ingredients')
         # mydialog.label.move(500, 70)
         if self.second_page is None:
-            self.second_page = second_page.ingredients()
+            self.second_page = second_page.Ingredients()
             self.second_page.show()
             # self.second_page.activate
 
             #        mydialog.show()
-
-
 
 
 if __name__ == "__main__":
