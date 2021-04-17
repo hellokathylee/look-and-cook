@@ -44,7 +44,7 @@ class MainWindow(QDialog, QWidget):
     width: int
     height: int
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize an instance of MainWindow.
         """
         super().__init__()
@@ -65,7 +65,7 @@ class MainWindow(QDialog, QWidget):
     # label.setFont(qtg.QFont("Helvetica", 18))
     # self.layout().addWidget(label)
 
-    def center(self):
+    def center(self) -> None:
         """Center MainWindow on the provided desktop screen.
         """
         qr = self.frameGeometry()
@@ -73,7 +73,7 @@ class MainWindow(QDialog, QWidget):
         qr.moveCenter(cp)
         self.move(qr.topLeft())
 
-    def InitWindow(self):
+    def InitWindow(self) -> None:
         """Open the main window on the user's screen with the provided dimensions.
         """
         # self.setWindowIcon(QtGui.QIcon(self.icon))
@@ -96,7 +96,7 @@ class MainWindow(QDialog, QWidget):
         self.setLayout(vbox)
         self.show()  # Opens the window
 
-    def clicked(self):
+    def clicked(self) -> None:
         """Link the start button to the second window displaying ingredient choices.
         """
         self.hide()

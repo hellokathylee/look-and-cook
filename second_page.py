@@ -18,7 +18,7 @@ class ingredients(QDialog, QWidget):
     Instance attributes:
         - #TODO
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize an instance of the ingredients window."""
         super().__init__()
 
@@ -70,8 +70,7 @@ class ingredients(QDialog, QWidget):
         self.line_edit = None
         self.user_input = None
 
-
-    def InitWindow(self):
+    def InitWindow(self) -> None:
         """Open the second window on the user's screen with the provided dimensions.
         """
         # self.setWindowIcon(QtGui.QIcon(self.icon))
@@ -135,14 +134,14 @@ class ingredients(QDialog, QWidget):
 
         self.show()
 
-    def add(self):
+    def add(self) -> None:
         """Create add button to add an additional ingredient option.
         """
         for x in range(len(self.ing) - 1, 0, -1):
             if self.ing[x - 1].isEnabled():
                 self.ing[x].setDisabled(False)
 
-    def remove(self):
+    def remove(self) -> None:
         """Create remove button to remove last ingredient added.
         """
         for x in self.ing[::-1][:-1]:
@@ -151,7 +150,7 @@ class ingredients(QDialog, QWidget):
                 x.clear()
                 return
 
-    def clear(self):
+    def clear(self) -> None:
         """Create clear button that removes all the ingredients the user has added to the
         ingredients list so far.
         """
@@ -161,7 +160,7 @@ class ingredients(QDialog, QWidget):
                 x.setDisabled(True)
         self.time.clear()
 
-    def submit(self):
+    def submit(self) -> None:
         """Create button to submit user input and proceed to the third page, which displays the
         recipes.
 
@@ -272,7 +271,9 @@ class ingredients(QDialog, QWidget):
     #     #         self.third_page = third_page.Recipes()
     #     #         self.third_page.show()
 
-    def center(self):  # Used top center the window on the desktop
+    def center(self) -> None:
+        """Function to center second window on the provided desktop screen.
+        """
         qr = self.frameGeometry()
         cp = QDesktopWidget().availableGeometry().center()
         qr.moveCenter(cp)
