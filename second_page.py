@@ -19,10 +19,13 @@ This file is Copyright (c) 2021 Dana Al Shekerchi, Nehchal Kalsi, Kathy Lee, and
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QApplication, QLabel, QDialog, QVBoxLayout, QWidget, QDesktopWidget, \
     QMainWindow, QPushButton, QCompleter, QLineEdit, QListWidget, QListView, QHBoxLayout, QAction, \
-    QMessageBox, QSpinBox
+    QMessageBox, QSpinBox, QComboBox
 from PyQt5.QtCore import Qt
 import sys
 from PyQt5 import QtGui
+from PyQt5.QtGui import QPixmap, QDoubleValidator, QValidator, QIcon
+import data_reading, third_page, data_type, sort_srch_rslts
+import urllib
 from PyQt5.QtGui import QPixmap, QDoubleValidator, QValidator, QIcon, QFont
 import data_reading
 import third_page
@@ -111,7 +114,8 @@ class Ingredients(QDialog, QWidget):
         self.list.setStyleSheet('color: rgb(35, 87, 77)')
         data = data_reading.read_recipes(data_reading.RECIPES_FILE)
         data_reading.clean_ingredients(data)
-        self.clean = list(data_reading.get_ingredients(data))
+        self.clean = sorted(list(data_reading.get_ingredients(data)))
+
         for i in range(len(self.clean)):
             self.list.insertItem(i, self.clean[i])
         # self.list.setResizeMode(QListView_ResizeMode=)
@@ -134,11 +138,7 @@ class Ingredients(QDialog, QWidget):
         self.setGeometry(self.left, self.top, self.width, self.height)
         self.setWindowTitle(self.title)
 
-        # data = data_reading.read_recipes(data_reading.RECIPES_FILE)
-        # data_reading.clean_ingredients(data)
-        # clean = list(data_reading.get_ingredients(data))
-        testing = ['check', 'one', 'two', 'three', 'white pepper', 'blue pepper']
-        completer = QCompleter(self.clean)
+        completer = QCompleter(sorted(self.clean))
         completer.setFilterMode(Qt.MatchContains)
         completer.setCaseSensitivity(Qt.CaseInsensitive)
 
@@ -249,9 +249,11 @@ class Ingredients(QDialog, QWidget):
             contains_duplicates.setWindowTitle("Error! - Duplicates")
             contains_duplicates.setWindowIcon(QIcon('visuals/L&C Icon.PNG'))
             if count == 1:
-                contains_duplicates.setText(f'Sorry, the ingredient {duplicates} appears more than once.')
+                contains_duplicates.setText(
+                    f'Sorry, the ingredient {duplicates} appears more than once.')
             else:
-                contains_duplicates.setText(f'Sorry, the ingredients {duplicates} appear more than once.')
+                contains_duplicates.setText(
+                    f'Sorry, the ingredients {duplicates} appear more than once.')
             contains_duplicates.setIcon(QMessageBox.Critical)
             x = contains_duplicates.exec_()
 
@@ -293,44 +295,16 @@ class Ingredients(QDialog, QWidget):
 
         else:
             self.hide()
-            if self.third_page is None:
+            user_input = [x.text() for x in self.ing if x.isEnabled()]
 
-                # self.user_input = [x.text() for x in self.ing if x.isEnabled()]
-                self.third_page = third_page.Recipes()
-                # temp= ''
-                # for x in self.ing:
-                #     if x.isEnabled():
-                #         temp += x.text() +
-                user_input = ','.join([x.text() for x in self.ing if x.isEnabled()])
-                time = self.time.text()
-                self.third_page.time.setText(time)
-                self.third_page.inputs.setText(user_input)
-                self.third_page.show()
+            self.third_page = third_page.Recipes(user_input, int(self.time.text()))
+            self.third_page.show()
 
-            # if self.time.text() == '0':
-            #     # next_page = QMessageBox()
-            #     # next_page.setWindowTitle("Next")
-            #     # next_page.setText('You did not specify the maximum time,'
-            #     #                   ' would you still like to submit?')
-            #     # next_page.setIcon(QMessageBox.Question)
-            #     # next_page.setStandardButtons(QMessageBox.Cancel | QMessageBox.Yes)
-            #     # # next_page.buttonClicked.connect(self.third_page)
-            #
-            #     check = QMessageBox.Question(self, 'testing', 'hopefully it works')
-            #     # if check == QMessageBox.Yes:
-            #     #     print('yay')
-
-                # x = next_page.exec_()
-    # def open(self) -> None:
-
-    # def third_page(self, i) -> None:
-    #     print(i.text())
-    #     # if i == "Yes":
-    #     #     self.hide()
-    #     #     if self.third_page is None:
-    #     #
-    #     #         self.third_page = third_page.Recipes()
-    #     #         self.third_page.show()
+    def center(self):  # Used top center the window on the desktop
+        qr = self.frameGeometry()
+        cp = QDesktopWidget().availableGeometry().center()
+        qr.moveCenter(cp)
+        self.move(qr.topLeft())
 
     def center(self) -> None:
         """Used top center the window on the desktop."""
