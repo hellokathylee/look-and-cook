@@ -34,10 +34,13 @@ import second_page
 
 
 class MainWindow(QDialog, QWidget):
-    """Program main window."""
+    """Opens the initial starting window for Look and Cook.
 
+    Contains the logo, start button, and code to handle a click event.
+    """
     def __init__(self) -> None:
-        """Initializes main window."""
+        """Initialize an instance of MainWindow.
+        """
         super().__init__()
         self.title = "Look and Cook"
         self.left = 500
@@ -59,15 +62,18 @@ class MainWindow(QDialog, QWidget):
     # self.layout().addWidget(label)
 
     def center(self) -> None:
-        """Used top center the window on the desktop."""
-        qr = self.frameGeometry()
-        cp = QDesktopWidget().availableGeometry().center()
-        qr.moveCenter(cp)
-        self.move(qr.topLeft())
+        """Center MainWindow on the provided desktop screen.
+       """
+        # Creates a window in the center of the screen using the screen size
+        frame = self.frameGeometry()
+        window = QDesktopWidget().availableGeometry().center()
+        frame.moveCenter(window)
+        self.move(frame.topLeft())
 
     def init_window(self) -> None:
-        """Initializes window display."""
-        # self.setWindowIcon(QtGui.QIcon(self.icon)) TODO remove this???
+        """Open the main window on the user's screen with the provided dimensions.
+        """
+        # Sets up screen
         self.setGeometry(self.left, self.top, self.width, self.height)
         self.setWindowTitle(self.title)
 
@@ -93,7 +99,8 @@ class MainWindow(QDialog, QWidget):
         self.show()  # Opens the window
 
     def clicked(self) -> None:
-        """Button click event."""
+        """Link the start button to the second window displaying ingredient choices.
+        """
         self.hide()
         # mydialog = QDialog(self)
         # mydialog = QDialog(self)
@@ -124,3 +131,18 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
     main = MainWindow()
     sys.exit(app.exec_())
+
+if __name__ == '__main__':
+    # import python_ta.contracts
+    # python_ta.contracts.check_all_contracts()
+
+    import doctest
+    doctest.testmod()
+
+    import python_ta
+    python_ta.check_all(config={
+        'max-line-length': 100,
+        'disable': ['E1136'],
+        'extra-imports': ['data_type'],
+        'max-nested-blocks': 4
+    })

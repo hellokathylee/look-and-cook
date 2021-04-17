@@ -15,7 +15,7 @@ import urllib
 class IndividualRecipe(QDialog, QWidget):
     """Class representing fourth window of program which displays a single recipe as selected
     by the user in the third window."""
-    def __init__(self):
+    def __init__(self, recipe_name: str) -> None:
         """Initialize an instance of the IndividualRecipe window.
         """
         super().__init__()
