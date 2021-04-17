@@ -19,7 +19,7 @@ from typing import Dict, Tuple, List
 import csv
 
 RECIPES_FILE = "data/clean_recipes.csv"
-REVIEWS_FILE = "data/reviews.csv"   # todo: upload file to repo
+REVIEWS_FILE = "data/reviews.csv"
 
 # Key measurement words to remove from ingredients
 WORDS_TO_REMOVE = {'packages', 'cups', 'cup', 'tablespoons', 'tablespoon', 'teaspoon',
@@ -128,7 +128,7 @@ def get_reviews(file: csv) -> Dict[str, list]:
 
         for row in reader:
             # breakpoint()
-            if len(row) == 4:
+            if len(row) == 4 and '...' not in row[3]:
                 if row[0] in reviews_dict:
                     reviews_dict[row[0]].append(row[3])
                 else:
@@ -140,6 +140,9 @@ def get_reviews(file: csv) -> Dict[str, list]:
 def clean_ingredients(data: Dict[str, list]) -> None:
     """Mutate the provided dictionary by cleaning the ingredients (removing measurements and
     strings that aren't ingredients).
+
+    Additionally, ensure the names of all the recipes don't have unnecessary quotations
+    surrounding them.
     """
     for recipe in data:
         ingredients = data[recipe][7]
@@ -171,6 +174,12 @@ def clean_ingredients(data: Dict[str, list]) -> None:
             capitalized.add(capitalize)
 
         data[recipe][7] = capitalized
+
+        # Ensure the provided recipe name doesn't have unnecessary quotations around it
+        name = data[recipe][0]
+
+        if name[0] == "'":
+            data[recipe][0] = name[1: -1]
 
 
 def clean_ingredient_set(ingredients: set) -> Tuple:
