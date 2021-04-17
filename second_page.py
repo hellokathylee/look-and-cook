@@ -12,7 +12,14 @@ import data_reading, third_page
 
 
 class ingredients(QDialog, QWidget):
+    """Class representing second window of program which displays ingredients and allows users to
+    input ingredients and specify a maximum time for recipes displayed.
+
+    Instance attributes:
+        - #TODO
+    """
     def __init__(self):
+        """Initialize an instance of the ingredients window."""
         super().__init__()
 
         self.third_page = None
@@ -65,6 +72,8 @@ class ingredients(QDialog, QWidget):
 
 
     def InitWindow(self):
+        """Open the second window on the user's screen with the provided dimensions.
+        """
         # self.setWindowIcon(QtGui.QIcon(self.icon))
         self.setGeometry(self.left, self.top, self.width, self.height)
         self.setWindowTitle(self.title)
@@ -127,11 +136,15 @@ class ingredients(QDialog, QWidget):
         self.show()
 
     def add(self):
+        """Create add button to add an additional ingredient option.
+        """
         for x in range(len(self.ing) - 1, 0, -1):
             if self.ing[x - 1].isEnabled():
                 self.ing[x].setDisabled(False)
 
     def remove(self):
+        """Create remove button to remove last ingredient added.
+        """
         for x in self.ing[::-1][:-1]:
             if x.isEnabled():
                 x.setDisabled(True)
@@ -139,6 +152,9 @@ class ingredients(QDialog, QWidget):
                 return
 
     def clear(self):
+        """Create clear button that removes all the ingredients the user has added to the
+        ingredients list so far.
+        """
         for x in self.ing:
             x.clear()
             if x != self.ing1:
@@ -146,6 +162,21 @@ class ingredients(QDialog, QWidget):
         self.time.clear()
 
     def submit(self):
+        """Create button to submit user input and proceed to the third page, which displays the
+        recipes.
+
+        If there is an ingredient listed twice in the input, raise an error pop up that says
+        "Ingredient [duplicated ingredient] appears more than once" or "Ingredients [duplicated
+        ingredients] appear more than once" if there are multiple duplicated ingredients.
+
+        If there are remaining unfilled ingredient boxes, raise an error pop up that says
+        "Did not fill all the needed information".
+
+        If the user has inputted an invalid ingredient that does not appear in the list of
+        ingredients at the center, raise an error pop up that says "The ingredient [invalid
+        ingredient] is invalid" or "The ingredients [invalid ingredients] are invalid" if there
+        are more than 1 invalid ingredients.
+        """
         set_of_ing = set()
         duplicates = ''
         count = 0
