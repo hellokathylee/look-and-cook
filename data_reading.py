@@ -1,17 +1,7 @@
-"""CSC111 Final Project, Data Reading
-
+"""
 Description
 ===============================
-This module reads the raw data from the csv file and converts it into a usable format.
-===============================
 
-This file is provided solely for the personal and private use of TA's and professors
-teaching CSC111 at the University of Toronto St. George campus. All forms of
-distribution of this code, whether as given or with any changes, are
-expressly prohibited. For more information on copyright for CSC111 materials,
-please consult our Course Syllabus.
-
-This file is Copyright (c) 2020 Dana Alshekerchi, Nehchal Kalsi, Kathy Lee, Audrey Yoshino.
 """
 
 from __future__ import annotations
@@ -40,7 +30,8 @@ REMOVE_INGREDIENTS1 = {'marinate', 'low fat', 'breakfast', 'england', ' 2', 'fry
                        's thick', 'y', 'chopped', 'drained and finely chopped', 'top round',
                        'julienned', 'cleaned', 'boil', 'calories', 'party', 'gluten', 'Filling',
                        't', 'or less Grenadine (', 'ground', 'casings removed', 'chili', 'snow',
-                       'chill'}
+                       'chill', 'Alcoholic', 'Acesulfame potassium sweetener'}
+
 REMOVE_INGREDIENTS2 = {'rinsed and torn', 'and dried', 'rating',
                        'peeled and cubed', 'split', 'for topping', 'warmed', '\x99'}
 
@@ -48,6 +39,8 @@ REMOVE_INGREDIENTS2 = {'rinsed and torn', 'and dried', 'rating',
 def read_recipes(file: str) -> Dict[str, list]:
     """Read the given file and return a dictionary with recipe id mapping to
     other attributes of the recipe stored in a list.
+
+    Based upon the clean_recipes.csv file.
     """
     recipe_dict = {}
 
@@ -60,24 +53,68 @@ def read_recipes(file: str) -> Dict[str, list]:
             index = 0
 
             for inner_row in row[:9]:
-                if index == 7:  # ingredients
+                if index == 0:
+                    if "''" in inner_row:
+                        inner_row = inner_row.replace("''", "'").strip("'")
+                        dict_val.append(inner_row.strip())
+                    else:
+                        dict_val.append(inner_row.strip())
+
+                elif index == 7:  # ingredients
                     ingredients = inner_row.split(',')
-                    cleaned_ing = [x.strip() for x in ingredients]
+                    cleaned_ing = [y.strip() for y in ingredients]
                     dict_val.append(set(cleaned_ing))
-                    # dict_val.append(seREt(inner_row.split(',')))
 
                 elif index == 8:    # directions
-                    sntnc = row[8].strip("'")
-                    if not sntnc[-2:] == "**":
-                        sntnc = sntnc + "**"    # to split every bullet point
-                    dict_val.append(list(sntnc.split('**'))[:-1])
+                    sentence = row[8].strip("'")
+                    if not sentence[-2:] == "**":
+                        sentence = sentence + "**"    # to split every bullet point
+                    directions = list(sentence.split('**'))[:-1]
+
+                    for x in directions:
+                        if "''" in x:
+                            directions[directions.index(x)] = x.replace("''", "'")
+
+                    dict_val.append(directions)
 
                 else:
                     dict_val.append(inner_row.strip())
 
                 index += 1
-
                 recipe_dict[row[9].strip()] = dict_val  # remove extra space before assigning
+
+    return recipe_dict
+
+
+def get_ing_amounts(file: str) -> Dict[str, list]:
+    """Read the given file and return a dictionary with recipe id mapping to
+    the ingredients and their amounts.
+
+    Based upon the recipes.csv file.
+    """
+    recipe_dict = {}
+
+    with open(file) as csv_file:
+        reader = csv.reader(csv_file, delimiter=';')
+        next(reader)
+
+        for row in reader:
+            dict_val = []  # list containing ingredients
+            index = 0
+
+            for _ in row[:9]:
+                if index == 7:  # ingredients
+                    all_ings = row[8].strip("'")
+                    if not all_ings[-2:] == "**":
+                        all_ings = all_ings + "**"  # to split every bullet point
+                    dict_val.extend(list(all_ings.split('**'))[:-1])
+                    for x in dict_val:
+                        if "''" in x:
+                            dict_val[dict_val.index(x)] = x.replace("''", "'")
+
+                    recipe_dict[row[1].strip()] = dict_val  # remove extra space before assigning
+
+                index += 1
 
     return recipe_dict
 
@@ -95,8 +132,12 @@ def get_ingredients(data: Dict[str, list]) -> set:
 
 def get_review_scores(file: csv) -> Dict[str, float]:
     """Return a dictionary of recipe ids mapping to respective user ratings obtained
-    from the given file."""
+    from the given file.
+
+    Based upon the clean_recipes.csv file.
+    """
     unclean_reviews_dict = {}   # recipe_id: [score, length]
+    # 'length' for counting occurrences and taking average
 
     with open(file) as csv_file:
         reader = csv.reader(csv_file, delimiter=';')
@@ -104,7 +145,6 @@ def get_review_scores(file: csv) -> Dict[str, float]:
 
         for row in reader:
             row = row[0].split(",")
-
             if row[0] in unclean_reviews_dict:
                 unclean_reviews_dict[row[0]][0] += int(float(row[2]))
                 unclean_reviews_dict[row[0]][1] += 1
@@ -119,7 +159,10 @@ def get_review_scores(file: csv) -> Dict[str, float]:
 
 def get_reviews(file: csv) -> Dict[str, list]:
     """Return a dictionary of recipe ids mapping to respective user reviews obtained
-       from the given file."""
+    from the given file.
+
+    Based on reviews.csv file.
+    """
     reviews_dict = {}  # recipe_id: [reviews]
 
     with open(file) as csv_file:
@@ -127,12 +170,11 @@ def get_reviews(file: csv) -> Dict[str, list]:
         next(reader)
 
         for row in reader:
-            # breakpoint()
             if len(row) == 4 and '...' not in row[3]:
                 if row[0] in reviews_dict:
-                    reviews_dict[row[0]].append(row[3])
+                    reviews_dict[row[0]].append('"' + row[3].replace("''", "'").strip("'") + '"')
                 else:
-                    reviews_dict[row[0]] = [row[3]]
+                    reviews_dict[row[0]] = ['"' + row[3].replace("''", "'").strip("'") + '"']
 
     return reviews_dict
 
@@ -275,19 +317,3 @@ def check_remove(ingredient: str) -> \
             remove[1] = True
 
     return remove
-
-
-if __name__ == '__main__':
-    # import python_ta.contracts
-    # python_ta.contracts.check_all_contracts()
-
-    import doctest
-    doctest.testmod()
-
-    import python_ta
-    python_ta.check_all(config={
-        'max-line-length': 100,
-        'disable': ['E1136'],
-        'extra-imports': ['data_type'],
-        'max-nested-blocks': 4
-    })

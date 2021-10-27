@@ -1,0 +1,5 @@
+# Python libraries used in this project.
+
+# Graphics and data visualization
+PyQt5
+requests

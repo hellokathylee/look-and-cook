@@ -1,26 +1,17 @@
-"""CSC111 Winter 2021 Project Phase 2: Final Submission, Ingredients Program Window (2)
-
+"""
 Description
 ===============================
-This Python module contains the visualization of the ingredients selection program window.
 
-Copyright and Usage Information
-===============================
-This file is provided solely for the personal and private use of TAs and professors
-teaching CSC111 at the University of Toronto St. George campus. All forms of
-distribution of this code, whether as given or with any changes, are
-expressly prohibited. For more information on copyright for CSC111 materials,
-please consult our Course Syllabus.
-
-This file is Copyright (c) 2021 Dana Al Shekerchi, Nehchal Kalsi, Kathy Lee, and Audrey Yoshino.
 """
 from PyQt5.QtWidgets import QLabel, QDialog, QVBoxLayout, QWidget, QDesktopWidget, \
-    QPushButton, QCompleter, QLineEdit, QListWidget, QMessageBox, QSpinBox
+    QPushButton, QCompleter, QLineEdit, QListWidget, QMessageBox, QSpinBox, \
+    QGraphicsColorizeEffect, QListWidgetItem, QApplication
 from PyQt5.QtCore import Qt
 from PyQt5 import QtGui
-from PyQt5.QtGui import QIcon, QFont
+from PyQt5.QtGui import QIcon, QFont, QColor
 import data_reading
 from recipes_dialogue import RecipesDialogue
+from pathlib import Path
 
 
 class IngredientsDialogue(QDialog, QWidget):
@@ -36,38 +27,38 @@ class IngredientsDialogue(QDialog, QWidget):
         # Set up the screen background
         self.recipes_dialogue = None
         self.setStyleSheet("background-color: rgb(240, 225, 204)")
-        self.setWindowIcon(QIcon('visuals/L&C Icon.PNG'))
+        self.setWindowIcon(QIcon('visuals/L_C_Icon.PNG'))
 
         # Initialized all widgets needed
-        self.lbl_selected = QLabel("Your List", self)
-        self.lbl_selected.setFont(QFont('Georgia', 12, QFont.Bold))
-        self.lbl_selected.setStyleSheet('color: rgb(211, 104, 80)')
-        self.lbl_selected.setFixedSize(200, 25)
-        self.lbl_selected.move(80, 100)
+        self.lbl_list = QLabel("Your List", self)
+        self.lbl_list.setFont(QFont('Georgia', 12, QFont.Bold))
+        self.lbl_list.setStyleSheet('color: rgb(211, 104, 80)')
+        self.lbl_list.setFixedSize(200, 25)
+        self.lbl_list.move(80, 100)
 
-        self.max_add_label = QLabel("(10 ingredients max.)", self)
-        self.max_add_label.setFont(QFont('Georgia', 9))
-        self.max_add_label.setStyleSheet('color: rgb(35, 87, 77)')
-        self.max_add_label.move(57, 125)
-        self.max_add_label.resize(200, 20)
+        self.lbl_max_ingredients = QLabel("(10 ingredients max.)", self)
+        self.lbl_max_ingredients.setFont(QFont('Georgia', 9))
+        self.lbl_max_ingredients.setStyleSheet('color: rgb(35, 87, 77)')
+        self.lbl_max_ingredients.move(57, 125)
+        self.lbl_max_ingredients.resize(200, 20)
 
-        self.max_time_label = QLabel("Enter the max. cooking time (min):", self)
-        self.max_time_label.setFont(QFont('Georgia', 12, QFont.Bold))
-        self.max_time_label.setStyleSheet('color: rgb(211, 104, 80)')
-        self.max_time_label.setFixedSize(250, 80)
-        self.max_time_label.setWordWrap(True)
+        self.lbl_max_time = QLabel("Maximum cooking time in minutes (optional):", self)
+        self.lbl_max_time.setFont(QFont('Georgia', 12, QFont.Bold))
+        self.lbl_max_time.setStyleSheet('color: rgb(211, 104, 80)')
+        self.lbl_max_time.setFixedSize(250, 80)
+        self.lbl_max_time.setWordWrap(True)
 
-        self.lbl_all = QLabel("All Ingredients", self)
-        self.lbl_all.setFont(QFont('Georgia', 12, QFont.Bold))
-        self.lbl_all.setStyleSheet('color: rgb(211, 104, 80)')
-        self.lbl_all.setFixedSize(200, 25)
-        self.lbl_all.move(375, 100)
+        self.lbl_all_ingredients = QLabel("All Ingredients", self)
+        self.lbl_all_ingredients.setFont(QFont('Georgia', 12, QFont.Bold))
+        self.lbl_all_ingredients.setStyleSheet('color: rgb(211, 104, 80)')
+        self.lbl_all_ingredients.setFixedSize(200, 25)
+        self.lbl_all_ingredients.move(375, 100)
 
-        self.lbl_select = QLabel("Select your ingredients!", self)
-        self.lbl_select.setFont(QFont('Georgia', 17, QFont.Bold))
-        self.lbl_select.setStyleSheet('color: rgb(210, 146, 68)')
-        self.lbl_select.setFixedSize(400, 40)
-        self.lbl_select.move(180, 40)
+        self.lbl_select_items = QLabel("Select your ingredients!", self)
+        self.lbl_select_items.setFont(QFont('Georgia', 17, QFont.Bold))
+        self.lbl_select_items.setStyleSheet('color: rgb(210, 146, 68)')
+        self.lbl_select_items.setFixedSize(400, 40)
+        self.lbl_select_items.move(180, 40)
 
         self.time_selected = QSpinBox(self)
         self.time_selected.setStyleSheet('color: rgb(35, 87, 77)')
@@ -82,6 +73,33 @@ class IngredientsDialogue(QDialog, QWidget):
         self.line_edit = None
         self.user_input = None
 
+        self.disabled_color2 = QGraphicsColorizeEffect()
+        self.disabled_color2.setColor(QColor.fromRgb(240, 225, 204))
+
+        self.disabled_color3 = QGraphicsColorizeEffect()
+        self.disabled_color3.setColor(QColor.fromRgb(240, 225, 204))
+
+        self.disabled_color4 = QGraphicsColorizeEffect()
+        self.disabled_color4.setColor(QColor.fromRgb(240, 225, 204))
+
+        self.disabled_color5 = QGraphicsColorizeEffect()
+        self.disabled_color5.setColor(QColor.fromRgb(240, 225, 204))
+
+        self.disabled_color6 = QGraphicsColorizeEffect()
+        self.disabled_color6.setColor(QColor.fromRgb(240, 225, 204))
+
+        self.disabled_color7 = QGraphicsColorizeEffect()
+        self.disabled_color7.setColor(QColor.fromRgb(240, 225, 204))
+
+        self.disabled_color8 = QGraphicsColorizeEffect()
+        self.disabled_color8.setColor(QColor.fromRgb(240, 225, 204))
+
+        self.disabled_color9 = QGraphicsColorizeEffect()
+        self.disabled_color9.setColor(QColor.fromRgb(240, 225, 204))
+
+        self.disabled_color10 = QGraphicsColorizeEffect()
+        self.disabled_color10.setColor(QColor.fromRgb(240, 225, 204))
+
         # Sets up all the line edits
         self.ingredient1 = QLineEdit(self)
         self.ingredient1.setStyleSheet(
@@ -91,43 +109,56 @@ class IngredientsDialogue(QDialog, QWidget):
         self.ingredient2.setStyleSheet(
             'background-color: rgb(224, 182, 157); color: rgb(35, 87, 77)')
         self.ingredient2.setFont(QFont('Georgia', 10))
+        self.ingredient2.setGraphicsEffect(self.disabled_color2)
         self.ingredient3 = QLineEdit(self)
         self.ingredient3.setStyleSheet(
             'background-color: rgb(224, 182, 157); color: rgb(35, 87, 77)')
         self.ingredient3.setFont(QFont('Georgia', 10))
+        self.ingredient3.setGraphicsEffect(self.disabled_color3)
         self.ingredient4 = QLineEdit(self)
         self.ingredient4.setStyleSheet(
             'background-color: rgb(224, 182, 157); color: rgb(35, 87, 77)')
         self.ingredient4.setFont(QFont('Georgia', 10))
+        self.ingredient4.setGraphicsEffect(self.disabled_color4)
         self.ingredient5 = QLineEdit(self)
         self.ingredient5.setStyleSheet(
             'background-color: rgb(224, 182, 157); color: rgb(35, 87, 77)')
         self.ingredient5.setFont(QFont('Georgia', 10))
+        self.ingredient5.setGraphicsEffect(self.disabled_color5)
         self.ingredient6 = QLineEdit(self)
         self.ingredient6.setStyleSheet(
             'background-color: rgb(224, 182, 157); color: rgb(35, 87, 77)')
         self.ingredient6.setFont(QFont('Georgia', 10))
+        self.ingredient6.setGraphicsEffect(self.disabled_color6)
         self.ingredient7 = QLineEdit(self)
         self.ingredient7.setStyleSheet(
             'background-color: rgb(224, 182, 157); color: rgb(35, 87, 77)')
         self.ingredient7.setFont(QFont('Georgia', 10))
+        self.ingredient7.setGraphicsEffect(self.disabled_color7)
         self.ingredient8 = QLineEdit(self)
         self.ingredient8.setStyleSheet(
             'background-color: rgb(224, 182, 157); color: rgb(35, 87, 77)')
         self.ingredient8.setFont(QFont('Georgia', 10))
+        self.ingredient8.setGraphicsEffect(self.disabled_color8)
         self.ingredient9 = QLineEdit(self)
         self.ingredient9.setStyleSheet(
             'background-color: rgb(224, 182, 157); color: rgb(35, 87, 77)')
         self.ingredient9.setFont(QFont('Georgia', 10))
+        self.ingredient9.setGraphicsEffect(self.disabled_color9)
         self.ingredient10 = QLineEdit(self)
         self.ingredient10.setStyleSheet(
             'background-color: rgb(224, 182, 157); color: rgb(35, 87, 77)')
         self.ingredient10.setFont(QFont('Georgia', 10))
+        self.ingredient10.setGraphicsEffect(self.disabled_color10)
 
         # Gets all the ingredients from the data
         self.ingredient = [self.ingredient1, self.ingredient2, self.ingredient3, self.ingredient4,
                            self.ingredient5, self.ingredient6, self.ingredient7,
                            self.ingredient8, self.ingredient9, self.ingredient10]
+
+        self.disabled_color = [self.disabled_color2, self.disabled_color3, self.disabled_color4,
+                               self.disabled_color5, self.disabled_color6, self.disabled_color7,
+                               self.disabled_color8, self.disabled_color9, self.disabled_color10]
         data = data_reading.read_recipes(data_reading.RECIPES_FILE)
         data_reading.clean_ingredients(data)
         self.clean = sorted(list(data_reading.get_ingredients(data)))
@@ -135,7 +166,7 @@ class IngredientsDialogue(QDialog, QWidget):
             self.all_ingredients.insertItem(i, self.clean[i])
 
         # Sets up the screen with all the needed elements
-        self.title = "Look and Cook - Ingredients Selection"
+        self.title = "Look and Cook"
         self.left = 500
         self.top = 200
         self.width = 700
@@ -152,7 +183,7 @@ class IngredientsDialogue(QDialog, QWidget):
         self.setWindowTitle(self.title)
 
         # Moves the labels to the right position
-        self.max_time_label.move(250, self.height - 230)
+        self.lbl_max_time.move(250, self.height - 230)
         self.time_selected.move(550, self.height - 200)
 
         # Creates an autocomplete system to use when typing the ingredients
@@ -178,6 +209,7 @@ class IngredientsDialogue(QDialog, QWidget):
         vbox.setContentsMargins(250, 0, 120, 120)
         self.all_ingredients.setFixedSize(400, 300)
         vbox.addWidget(self.all_ingredients)
+        self.all_ingredients.itemDoubleClicked.connect(self.add_ingredient)
         self.setLayout(vbox)
 
         # Creates an add_item item button
@@ -219,7 +251,7 @@ class IngredientsDialogue(QDialog, QWidget):
         # Displays everything on the window
         self.show()
 
-    def center(self):
+    def center(self) -> None:
         """Function to center second window on the provided desktop screen.
         """
         qr = self.frameGeometry()
@@ -227,18 +259,31 @@ class IngredientsDialogue(QDialog, QWidget):
         qr.moveCenter(cp)
         self.move(qr.topLeft())
 
+        # frameGm = self.frameGeometry()
+        # screen = QApplication.desktop().screenNumber(QApplication.desktop().cursor().pos())
+        # centerPoint = QApplication.desktop().screenGeometry(screen).center()
+        # frameGm.moveCenter(centerPoint)
+        # self.move(frameGm.topLeft())
+
+        resolution = QDesktopWidget().screenGeometry()
+        self.move((resolution.width() / 2) - (self.frameSize().width() / 2),
+                  (resolution.height() / 2) - (self.frameSize().height() / 2))
+
     def add_item(self) -> None:
         """Enables search box for user to input a new ingredient."""
         for x in range(len(self.ingredient) - 1, 0, -1):
             if self.ingredient[x - 1].isEnabled():
+                self.ingredient[x - 1].setCursorPosition(0)
                 self.ingredient[x].setDisabled(False)
+                self.disabled_color[x - 1].setEnabled(False)
 
     def remove_item(self) -> None:
         """Removes the last ingredient of the list."""
-        for x in self.ingredient[::-1][:-1]:
-            if x.isEnabled():
-                x.setDisabled(True)
-                x.clear()
+        for x in range(len(self.ingredient))[::-1][:-1]:
+            if self.ingredient[x].isEnabled():
+                self.ingredient[x].setDisabled(True)
+                self.ingredient[x].clear()
+                self.disabled_color[x - 1].setEnabled(True)
                 return
 
     def clear_list(self) -> None:
@@ -247,7 +292,14 @@ class IngredientsDialogue(QDialog, QWidget):
             x.clear()
             if x != self.ingredient1:
                 x.setDisabled(True)
-        self.time_selected.clear()
+        self.time_selected.setValue(0)
+
+    def add_ingredient(self, item: QListWidgetItem) -> None:
+        """Add the double clicked ingredient to the ingredients list."""
+        for x in self.ingredient:
+            if x.isEnabled() and x.text() == '':
+                x.setText(item.text())
+                return
 
     def submit(self) -> None:
         """Create button to submit user input and proceed to the third page, which displays the
@@ -288,7 +340,7 @@ class IngredientsDialogue(QDialog, QWidget):
             contains_duplicates.setIcon(QMessageBox.Critical)
             x = contains_duplicates.exec_()
 
-        elif any([x.isEnabled() and x.text() == '' for x in
+        elif any([y.isEnabled() and y.text() == '' for y in
                   self.ingredient]):  # Checks if there are any empty textboxes
             warning = QMessageBox()
             warning.setWindowTitle("Error!")
@@ -298,8 +350,8 @@ class IngredientsDialogue(QDialog, QWidget):
             warning.setIcon(QMessageBox.Critical)
             x = warning.exec_()
 
-        elif not all([x.text() in self.clean for x in self.ingredient if
-                      x.isEnabled()]):  # Checks if there are any  items that are not valid
+        elif not all([z.text() in self.clean for z in self.ingredient if
+                      z.isEnabled()]):  # Checks if there are any  items that are not valid
             invalid_ingredient = ''
             count = 0
             for x in self.ingredient:
@@ -322,8 +374,9 @@ class IngredientsDialogue(QDialog, QWidget):
 
         else:  # If everything is correct
             self.hide()
-            user_input = [x.text() for x in self.ingredient if x.isEnabled()]
+            user_input = [u.text() for u in self.ingredient if u.isEnabled()]
 
             # Goes to the next dialogue
-            self.recipes_dialogue = RecipesDialogue(user_input, int(self.time_selected.text()))
+            self.recipes_dialogue = \
+                RecipesDialogue(user_input, int(self.time_selected.text()), self)
             self.recipes_dialogue.show()

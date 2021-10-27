@@ -1,301 +1,181 @@
-"""CSC111 Winter 2021 Project Phase 2: Final Submission, Ingredients Program Window (2)
+"""Look And Cook: Display Recipe Program Window (4)
 
 Description
 ===============================
-This Python module contains the visualization of the ingredients selection program window.
-
-Copyright and Usage Information
-===============================
-This file is provided solely for the personal and private use of TAs and professors
-teaching CSC111 at the University of Toronto St. George campus. All forms of
-distribution of this code, whether as given or with any changes, are
-expressly prohibited. For more information on copyright for CSC111 materials,
-please consult our Course Syllabus.
-
-This file is Copyright (c) 2021 Dana Al Shekerchi, Nehchal Kalsi, Kathy Lee, and Audrey Yoshino.
+This Python module contains the visualization of the recipe display program window. This window is
+where the user could view details about the recipe they chose including ingredients, directions,
+rating, cooking time and an image.
 """
-from PyQt5.QtWidgets import QLabel, QDialog, QWidget, QDesktopWidget, QPushButton, QLineEdit
-from PyQt5.QtGui import QPixmap
+from PyQt5.QtWidgets import QLabel, QDialog, QWidget, QDesktopWidget, QLineEdit, \
+    QListWidget, QVBoxLayout, QHBoxLayout, QPushButton, QApplication
+from PyQt5.QtGui import QIcon, QFont, QImage, QPixmap
+import requests
 import data_reading
-import urllib
+from reviews_dialogue import Reviews
 
 
 class IndividualRecipe(QDialog, QWidget):
     """Class representing fourth window of program which displays a single recipe as selected
     by the user in the third window."""
-    def __init__(self, recipe_name: str) -> None:
+
+    def __init__(self, recipe_name: str, previous_window: QDesktopWidget) -> None:
         """Initialize an instance of the IndividualRecipe window.
         """
         super().__init__()
+        self.display_reviews_dialogue = None
         self.recipe_name = recipe_name
+        self.previous_window = previous_window
 
         self.recipe_title = QLabel(self.recipe_name, self)
+        self.recipe_title.setFont(QFont('Tisa', 14, QFont.Bold))
+        self.recipe_title.setStyleSheet('color: rgb(210, 146, 68)')
+        self.recipe_title.setFixedSize(600, 40)
+        self.recipe_title.move(50, 40)
 
         self.selected_recipe = QLineEdit()  # get recipe id, if possible
         self.data = data_reading.read_recipes(data_reading.RECIPES_FILE)
         data_reading.clean_ingredients(self.data)
 
+        self.id = 0
+
         for x in self.data:
             if self.data[x][0] == self.recipe_name:
-                self.selected_recipe = x
+                self.id = x
 
-        # self.ingredient = QLabel("Ingredients", self)
-        # self.ingredient.move(30, 50)
-        # self.recipe_name = QLabel("Max number of ingredients ", self)
+        self.lbl_time_author = QLabel('Cook Time: ' + self.data[self.id][6] + '   |   Author: '
+                                      + self.data[self.id][3], self)
+        self.lbl_time_author.setFont(QFont('Tisa', 10))
+        self.lbl_time_author.setStyleSheet('color: rgb(35, 87, 77)')
+        self.lbl_time_author.setFixedSize(600, 40)
+        self.lbl_time_author.move(50, 75)
 
-        # self.time = QLabel("Max time", self)
+        all_ratings = data_reading.get_review_scores("data/clean_reviews.csv")
 
-        # self.author = QLabel("All Ingredients", self)
-        # self.author.move(300, 25)
+        if self.id in all_ratings:
+            rating = all_ratings[self.id]
 
-        # self.time = QSpinBox(self)
-        # self.time.setRange(0, 50000)
+            self.lbl_stars = QLabel(str(rating) + '⭐' * round(rating), self)
+            self.lbl_stars.setFont(QFont('Tisa', 10, QFont.Bold))
+            self.lbl_stars.setStyleSheet('color: rgb(211, 104, 80)')
+            self.lbl_stars.setFixedSize(600, 40)
+            self.lbl_stars.move(50, 108)
 
-        # self.ing1 = QLineEdit(self)
-        # self.ing2 = QLineEdit(self)
-        # self.ing3 = QLineEdit(self)
-        # self.ing4 = QLineEdit(self)
-        # self.ing5 = QLineEdit(self)
-        # self.ing6 = QLineEdit(self)
-        # self.ing7 = QLineEdit(self)
-        # self.ing8 = QLineEdit(self)
-        # self.ing9 = QLineEdit(self)
-        # self.ing10 = QLineEdit(self)
-        #
-        # self.ing = [self.ing1, self.ing2, self.ing3, self.ing4, self.ing5, self.ing6, self.ing7,
-        #             self.ing8, self.ing9, self.ing10]
+        else:
+            self.lbl_stars = QLabel('Rating unavailable ⭐', self)
+            self.lbl_stars.setFont(QFont('Tisa', 10, QFont.Bold))
+            self.lbl_stars.setStyleSheet('color: rgb(211, 104, 80)')
+            self.lbl_stars.setFixedSize(600, 40)
+            self.lbl_stars.move(50, 108)
 
-        # self.list = QListWidget()
-        # data = data_reading.read_recipes(data_reading.RECIPES_FILE)
-        # data_reading.clean_ingredients(data)
-        # self.clean = list(data_reading.get_ingredients(data))
-        # for i in range(len(self.clean)):
-        #     self.list.insertItem(i, self.clean[i])
-        # self.list.setResizeMode(QListView_ResizeMode=)
+        url_image = self.data[self.id][2]
+        image = QImage()
+        image.loadFromData(requests.get(url_image).content)
 
-        self.title = "Page 4"
+        self.lbl_image = QLabel(self)
+        self.lbl_image.setPixmap(QPixmap(image).scaled(300, 300, 2))
+
+        self.lbl_ingredients = QLabel('Ingredients', self)
+        self.lbl_ingredients.setFont(QFont('Tisa', 12, QFont.Bold))
+        self.lbl_ingredients.setStyleSheet('color: rgb(211, 104, 80)')
+        self.lbl_ingredients.setFixedSize(600, 40)
+
+        self.lbl_direction = QLabel('Directions', self)
+        self.lbl_direction.setFont(QFont('Tisa', 12, QFont.Bold))
+        self.lbl_direction.setStyleSheet('color: rgb(211, 104, 80)')
+        self.lbl_direction.setFixedSize(600, 40)
+
+        self.ingredients_names = data_reading.get_ing_amounts("data/recipes.csv")[self.id]
+
+        self.lst_ingredients = QListWidget()
+        for i in range(len(self.ingredients_names)):
+            self.lst_ingredients.insertItem(i, self.ingredients_names[i])
+        self.lst_ingredients.setFont(QFont('Tisa', 10))
+        self.lst_ingredients.setStyleSheet('color: rgb(35, 87, 77)')
+        self.lst_ingredients.setWordWrap(True)
+
+        self.directions = list(self.data[self.id][8])
+        self.lst_directions = QListWidget()
+        for i in range(len(self.directions)):
+            self.lst_directions.insertItem(i, str(i + 1) + '. ' + self.directions[i])
+        self.lst_directions.setFont(QFont('Tisa', 10))
+        self.lst_directions.setStyleSheet('color: rgb(35, 87, 77)')
+        self.lst_directions.setWordWrap(True)
+
+        self.title = "Look and Cook"
         self.left = 500
         self.top = 200
         self.width = 700
-        self.height = 450
-        self.InitWindow()
+        self.height = 700
+        self.init_window()
         self.center()
+        self.setFixedSize(700, 700)
+        self.setStyleSheet("background-color: rgb(240, 225, 204)")
+        self.setWindowIcon(QIcon('visuals/L_C_Icon.PNG'))
 
         self.line_edit = None
         self.user_input = None
 
-    def InitWindow(self):
+    def init_window(self) -> None:
         """Open the fourth window on the user's screen with the provided dimensions.
         """
-        # self.setWindowIcon(QtGui.QIcon(self.icon))
-        # self.setGeometry(self.left, self.top, self.width, self.height)
-        # self.setWindowTitle(self.title)
-        #
-        # recipe_name = QLabel(f"{self.data[self.selected_recipe.text()][0]}", self)
-        # recipe_name.move(3 * (self.width // 4) - 25, self.height // 4 - 50)
-        # recipe_name.resize(200, 20)
-        #
-        # author = QLabel(f"{self.data[self.selected_recipe.text()][3]}", self)
-        # author.move(3 * (self.width // 4) - 25, self.height // 4 - 50)
-        #
-        # scores_dict = data_reading.get_review_scores("data/clean_reviews.csv")
-        # review_score = QLabel(f"{scores_dict[self.selected_recipe]}", self)
-        # review_score.move(3 * (self.width // 4) - 25, self.height // 4 - 50)
-        #
-        # url = self.data[self.selected_recipe.text()][2]
-        # pic_data = urllib.urlopen(url).read()
-        # picture = QLabel()
-        # pixmap = QPixmap()
-        # pixmap.loadFromData(pic_data)
-        # # icon = QIcon(pixmap)
-        # picture.setPixmap(pixmap)
-        # # picture = QLabel(f"{self.data[self.selected_recipe.text()][2]}", self)
-        #
-        # # add for loop or something to separate ings and directions
-        # recipe_ingredients = QLabel(f"{self.data[self.selected_recipe.text()][7]}", self)
-        # recipe_ingredients.setWordWrap(True)
-        #
-        # directions = QLabel(f"{self.data[self.selected_recipe.text()][8]}", self)
-        # directions.setWordWrap(True)
+        self.setGeometry(self.left, self.top, self.width, self.height)
+        self.setWindowTitle(self.title)
 
-        # self.in
+        vbox1 = QVBoxLayout()
+        vbox1.setContentsMargins(40, 150, 10, 30)
+        self.lst_ingredients.setFixedSize(285, 200)
+        vbox1.addWidget(self.lbl_image)
+        vbox1.addWidget(self.lbl_ingredients)
+        vbox1.addWidget(self.lst_ingredients)
 
-        # data = data_reading.read_recipes(data_reading.RECIPES_FILE)
-        # data_reading.clean_ingredients(data)
-        # clean = list(data_reading.get_ingredients(data))
-        # testing = ['check', 'one', 'two', 'three', 'white pepper', 'blue pepper']
-        # completer = QCompleter(self.clean)
-        # completer.setFilterMode(Qt.MatchContains)
-        # completer.setCaseSensitivity(Qt.CaseInsensitive)
+        vbox2 = QVBoxLayout()
+        vbox2.setContentsMargins(10, 100, 50, 200)
+        self.lst_directions.setFixedSize(300, 497)
+        vbox2.addWidget(self.lbl_direction)
+        vbox2.addWidget(self.lst_directions)
 
-        # self.ing1.setCompleter(completer)
-        # self.ing1.move(30, 100)
-        # self.ing1.setFixedSize(150, 30)
-        #
-        # height = 150
-        # for x in self.ing[1:]:
-        #     x.setCompleter(completer)
-        #     x.move(30, height)
-        #     x.setFixedSize(150, 30)
-        #     x.setDisabled(True)
-        #     height += 50
+        hbox = QHBoxLayout()
+        hbox.addLayout(vbox1)
+        hbox.addLayout(vbox2)
+        self.setLayout(hbox)
 
-        # self.recipe_name.move(3 * (self.width // 4) - 25, self.height // 4 - 50)
-        # self.recipe_name.resize(200, 20)
-        # self.time.move(3 * (self.width // 4) + 20, (self.height // 4) + 100)
-        # self.time.move(3 * (self.width // 4), (self.height // 4) + 130)
+        # Creates a back button
+        back = QPushButton("Back", self)
+        back.setGeometry((self.width // 2) - 50, self.height // 2 + 200, 80, 30)
+        back.move(585, 10)
+        back.setFont(QFont('Tisa', 9, QFont.Bold))
+        back.setStyleSheet("border-radius: 15; background-color: rgb(210, 146, 68); "
+                           "color: rgb(240, 225, 204)")
+        back.clicked.connect(self.go_back)
 
-        # self.ing1.move(30, 75)
-        # self.ing2.move(30, 100)
-        # Figure out placement
-
-        # vbox = QVBoxLayout()
-        # vbox.setContentsMargins(225, 50, 100, 50)
-        # self.list.setFixedSize(250, 500)
-        # vbox.addWidget(self.list)
-        # self.setLayout(vbox)
-
-        # Add button
-        # add = QPushButton("Add", self)
-        # add.move(3 * (self.width // 4), self.height // 4)
-        # add.clicked.connect(self.add)
-
-        # Delete button
-        # remove = QPushButton("Remove", self)
-        # remove.move(3 * (self.width // 4), (self.height // 4) + 50)
-        # remove.clicked.connect(self.remove)
-
-        # label_test = QLabel('Text')
-        # label_test.move(50, 70)
-
-        # review_button = QPushButton("Reviews", self)
-        # review_button.move(3 * (self.width // 4), self.height + 25)
-        # review_button.clicked.connect(self.user_reviews())
-        #
-        # submit = QPushButton("Submit", self)
-        # submit.move(3 * (self.width // 4), self.height + 75)
-        # submit.clicked.connect(self.submit)
+        # Creates a button for reviews
+        reviews = QPushButton("Reviews", self)
+        reviews.setGeometry((self.width // 2) - 50, self.height // 2 + 200, 80, 30)
+        reviews.move(495, 10)
+        reviews.setFont(QFont('Tisa', 9, QFont.Bold))
+        reviews.setStyleSheet("border-radius: 15; background-color: rgb(210, 146, 68); "
+                              "color: rgb(240, 225, 204)")
+        reviews.clicked.connect(self.reviews_window)
 
         self.show()
 
-    # def add(self):
-    #     for x in range(len(self.ing) - 1, 0, -1):
-    #         if self.ing[x - 1].isEnabled():
-    #             self.ing[x].setDisabled(False)
-    #
-    # def remove(self):
-    #     for x in self.ing[::-1][:-1]:
-    #         if x.isEnabled():
-    #             x.setDisabled(True)
-    #             x.clear()
-    #             return
-
-    # def user_reviews(self):
-    #     # ask dana
-    #     # how to open a new window
-    #     reviews_dict = data_reading.get_reviews("data/reviews.csv")
-    #
-    #     reviews = QLabel(f"{reviews_dict[self.selected_recipe]}", self)
-    #     reviews.setWordWrap(True)
-
-    # def submit(self):
-    #     set_of_ing = set()
-    #     duplicates = ''
-    #     count = 0
-    #     for x in self.ing:
-    #         if x.isEnabled() and x.text() in set_of_ing:
-    #             duplicates += x.text()
-    #             count += 1
-    #         else:
-    #             set_of_ing.add(x.text())
-    #
-    #     if len(duplicates) != 0:
-    #         contains_duplicates = QMessageBox()
-    #         contains_duplicates.setWindowTitle("Error")
-    #         if count == 1:
-    #             contains_duplicates.setText(f'Ingredient {duplicates} appears more than once.')
-    #         else:
-    #             contains_duplicates.setText(f'Ingredients {duplicates} appear more than once.')
-    #         contains_duplicates.setIcon(QMessageBox.Critical)
-    #         x = contains_duplicates.exec_()
-    #
-    #     elif any([x.isEnabled() and x.text() == '' for x in self.ing]):
-    #         # self.submit.setStyleSheet("border :2px solid ;"
-    #         #                      "border-top-color : red; "
-    #         #                      "border-left-color : red;"
-    #         #                      "border-right-color : red;"
-    #         #                      "border-bottom-color : red")
-    #         warning = QMessageBox()
-    #         warning.setWindowTitle("Error")
-    #         warning.setText('Did not fill all the needed information.')
-    #         warning.setIcon(QMessageBox.Critical)
-    #         x = warning.exec_()
-    #
-    #     elif not all([x.text() in self.clean for x in self.ing if x.isEnabled()]):
-    #         invalid_ingrdnt = ''
-    #         count = 0
-    #         for x in self.ing:
-    #             if x.text() not in self.clean and x.isEnabled():
-    #                 invalid_ingrdnt += x.text() + ', '
-    #
-    #                 count += 1
-    #         invalid_ingrdnt = invalid_ingrdnt.strip(', ')
-    #
-    #         invalid = QMessageBox()
-    #         invalid.setWindowTitle("Error")
-    #         # invalid.setText('One or more of the ingredients are invalid')
-    #         if count == 1:
-    #             invalid.setText(f"The ingredient '{invalid_ingrdnt}' is invalid.")
-    #         else:
-    #             invalid.setText(f"The ingredients '{invalid_ingrdnt}' are invalid.")
-    #         invalid.setIcon(QMessageBox.Critical)
-    #         x = invalid.exec_()
-    #
-    #     else:
-    #         self.hide()
-    #         if self.third_page is None:
-    #             # self.user_input = [x.text() for x in self.ing if x.isEnabled()]
-    #             # self.third_page = third_page.Recipes()
-    #             # temp= ''
-    #             # for x in self.ing:
-    #             #     if x.isEnabled():
-    #             #         temp += x.text() +
-    #             user_input = ','.join([x.text() for x in self.ing if x.isEnabled()])
-    #             time = self.time.text()
-    #             self.third_page.time.setText(time)
-    #             self.third_page.inputs.setText(user_input)
-    #             self.third_page.show()
-
-    # if self.time.text() == '0':
-    #     # next_page = QMessageBox()
-    #     # next_page.setWindowTitle("Next")
-    #     # next_page.setText('You did not specify the maximum time,'
-    #     #                   ' would you still like to submit?')
-    #     # next_page.setIcon(QMessageBox.Question)
-    #     # next_page.setStandardButtons(QMessageBox.Cancel | QMessageBox.Yes)
-    #     # # next_page.buttonClicked.connect(self.third_page)
-    #
-    #     check = QMessageBox.Question(self, 'testing', 'hopefully it works')
-    #     # if check == QMessageBox.Yes:
-    #     #     print('yay')
-
-    # x = next_page.exec_()
-
-    # def open(self):
-
-    # def third_page(self, i):
-    #     print(i.text())
-    #     # if i == "Yes":
-    #     #     self.hide()
-    #     #     if self.third_page is None:
-    #     #
-    #     #         self.third_page = third_page.Recipes()
-    #     #         self.third_page.show()
-
-    def center(self):  # Used top center the window on the desktop
+    def center(self) -> None:  # Used top center the window on the desktop
         """Function to center third window on the provided desktop screen.
         """
         qr = self.frameGeometry()
         cp = QDesktopWidget().availableGeometry().center()
         qr.moveCenter(cp)
         self.move(qr.topLeft())
+
+    def reviews_window(self) -> None:
+        """Display the reviews for the selected recipe in a new window.
+        """
+        self.hide()
+        self.display_reviews_dialogue = Reviews(self.id, self.recipe_name, self)
+        self.display_reviews_dialogue.show()
+
+    def go_back(self) -> None:
+        """Take the user to the previous window.
+        """
+        self.hide()
+        self.previous_window.show()
